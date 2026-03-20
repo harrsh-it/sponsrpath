@@ -45,7 +45,7 @@ export function HowItWorks() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <p className=" text-[#09567a]  font-semibold    mb-3">Simple Process</p>
+
           <h2 className="text-[#09567a] text-5xl  font-bold ">How It Works</h2>
           <p className="  text-2xl font-semibold   mt-4 max-w-2xl mx-auto">
             From profile to offer in three steps — designed specifically for international students.
@@ -59,7 +59,7 @@ export function HowItWorks() {
 
           {STEPS.map((step, i) => {
             const Icon = step.icon;
-            return (    
+            return (
               <motion.div
                 key={step.step}
                 initial={{ opacity: 0, y: 30 }}
