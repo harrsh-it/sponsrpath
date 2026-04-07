@@ -125,18 +125,12 @@ export default function Trustbar() {
             <div className="absolute inset-0 bg-transparent" />
 
             <div className="flex animate-scrollX whitespace-nowrap relative z-10">
-              {logos.concat(logos).map((logo, index) => (
+              {Array.from({ length: 15 }).concat(Array.from({ length: 15 })).map((_, index) => (
                 <div
                   key={index}
-                  className="w-16 h-auto mx-2 sm:w-24 sm:mx-3 md:w-32 md:mx-4 lg:w-40 lg:mx-6 flex-shrink-0"
+                  className="w-24 h-14 mx-2 sm:w-32 sm:h-20 sm:mx-3 md:w-40 md:h-24 md:mx-4 lg:w-48 lg:mx-6 flex-shrink-0 bg-slate-100 rounded-xl flex items-center justify-center border border-slate-200"
                 >
-                  <Image
-                    src={logo}
-                    width={120}
-                    height={120}
-                    alt={`Customer Logo ${index + 1}`}
-                    className="w-full h-14 sm:h-20 md:h-28 lg:h-32 object-contain"
-                  />
+                  <span className="text-slate-400 font-bold text-sm md:text-lg">Partner {index + 1}</span>
                 </div>
               ))}
             </div>

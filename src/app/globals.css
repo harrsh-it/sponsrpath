@@ -57,55 +57,47 @@
   --radius-4xl: calc(var(--radius) * 2.6);
   /* SponsorPath custom tokens */
   --color-navy: var(--navy);
+  --color-teal: var(--teal);
   --color-amber: var(--amber);
   --color-amber-light: var(--amber-light);
+  --color-emerald: var(--emerald);
   --color-sponsor-confirmed: var(--sponsor-confirmed);
   --color-sponsor-likely: var(--sponsor-likely);
   --color-sponsor-unverified: var(--sponsor-unverified);
 }
 
 :root {
-  /* SponsorPath Brand Colors */
-  --navy: #0A1F44;
-  --amber: #F59E0B;
-  --amber-light: #FEF3C7;
-  --sponsor-confirmed: #10B981;
-  --sponsor-likely: #F59E0B;
-  --sponsor-unverified: #94A3B8;
+  /* SponsorPath Brand Colors - Standardized from Hero/HowItWorks */
+  --navy: #09567a;
+  --teal: #147f8a;
+  --amber: #f59e0b;
+  --amber-light: #fef3c7;
+  --emerald: #1a9889;
+  
+  --sponsor-confirmed: #1a9889;
+  --sponsor-likely: #f59e0b;
+  --sponsor-unverified: #94a3b8;
 
   /* Shadcn semantic tokens — overriding defaults */
   --background: #FFFFFF;
-  --foreground: #1A2B4A;
+  --foreground: #09567a;
   --card: #FFFFFF;
-  --card-foreground: #1A2B4A;
+  --card-foreground: #09567a;
   --popover: #FFFFFF;
-  --popover-foreground: #1A2B4A;
-  --primary: #0A1F44;
+  --popover-foreground: #09567a;
+  --primary: #09567a;
   --primary-foreground: #FFFFFF;
-  --secondary: #F8FAFC;
-  --secondary-foreground: #1A2B4A;
-  --muted: #F8FAFC;
-  --muted-foreground: #64748B;
-  --accent: #F59E0B;
+  --secondary: #f8fafc;
+  --secondary-foreground: #09567a;
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  --accent: #147f8a;
   --accent-foreground: #FFFFFF;
-  --destructive: #EF4444;
-  --border: #E2E8F0;
-  --input: #E2E8F0;
-  --ring: #0A1F44;
-  --chart-1: #0A1F44;
-  --chart-2: #F59E0B;
-  --chart-3: #10B981;
-  --chart-4: #6366F1;
-  --chart-5: #F43F5E;
+  --destructive: #ef4444;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #09567a;
   --radius: 0.75rem;
-  --sidebar: #F8FAFC;
-  --sidebar-foreground: #1A2B4A;
-  --sidebar-primary: #0A1F44;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #EFF6FF;
-  --sidebar-accent-foreground: #0A1F44;
-  --sidebar-border: #E2E8F0;
-  --sidebar-ring: #0A1F44;
 }
 
 @layer base {
@@ -138,7 +130,7 @@
 
 @utility heading-md {
   font-family: var(--font-heading), system-ui, sans-serif;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 2.25rem;
   letter-spacing: -0.02em;
   line-height: 1.15;
