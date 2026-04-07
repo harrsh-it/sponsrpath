@@ -233,12 +233,7 @@ const Hero = () => {
           </div>
 
           {/* Trust Signals */}
-          <div className="flex flex-wrap gap-3 sm:gap-4 text-base sm:text-xl font-bold text-gray-500">
-            <span>✓ Free for students</span>
-            <span>✓ GDPR Compliant</span>
-            <span>✓ UK-based</span>
-            <span>✓ No spam</span>
-          </div>
+          
 
           {/* Mini Profiles */}
           <div className="flex items-center gap-3 mt-6">
@@ -307,7 +302,7 @@ const Hero = () => {
         </div>
 
         {/* CARD 2 */}
-        <div className="group relative overflow-hidden rounded-2xl p-10 sm:p-12 lg:p-16 text-center shadow-md bg-gradient-to-r from-[#147f8a] to-[#1a9889] text-white border border-transparent hover:-translate-y-2 hover:shadow-xl transition-all duration-300 cursor-pointer">
+        <div className="group relative overflow-hidden rounded-2xl p-10 sm:p-12 lg:p-16 text-center shadow-md bg-linear-to-r from-[#147f8a] to-[#1a9889] text-white border border-transparent hover:-translate-y-2 hover:shadow-xl transition-all duration-300 cursor-pointer">
           <div className="absolute top-0 left-0 w-full h-2 bg-white origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-white/20 text-white group-hover:bg-white group-hover:text-[#147f8a] group-hover:scale-110 transition-all duration-300">
@@ -316,7 +311,7 @@ const Hero = () => {
           </div>
           <h3 className="font-bold text-2xl">Portal Job</h3>
           <p className="text-lg mt-2 text-white/90">
-            Explore jobs that clearly state visa sponsorship availability.
+            Explore  jobs that clearly state visa sponsorship availability.
           </p>
         </div>
 
