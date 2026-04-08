@@ -1,10 +1,13 @@
 import { prisma } from "@/lib/prisma"
 import { VisaBadge, SponsorStatus } from "@/components/ui/VisaBadge"
+import { CompanyLogo } from "@/components/ui/CompanyLogo"
 import { Search, MapPin, Briefcase, Building2, Globe, Clock, SlidersHorizontal } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import { Footer } from "@/components/Footer"
 import FilterSidebar from "@/components/jobs/FilterSidebar"
 import Link from "next/link"
+import { auth } from "@/auth"
+import SaveJobButton from "@/components/jobs/SaveJobButton"
 
 export const metadata = {
   title: "Browse Jobs | SponsorPath",
@@ -30,6 +33,18 @@ export default async function JobsPage({
   }>
 }) {
   const { q, sponsorship, type, location, industry, salary } = await searchParams
+
+  const session = await auth()
+  let savedJobIds: string[] = []
+  if (session?.user?.id) {
+    const jobSeeker = await prisma.jobSeeker.findUnique({
+      where: { userId: session.user.id },
+      include: { savedJobs: { select: { jobPostId: true } } }
+    })
+    if (jobSeeker) {
+      savedJobIds = jobSeeker.savedJobs.map((sj: { jobPostId: string }) => sj.jobPostId)
+    }
+  }
 
   // Build the where clause
   const where: any = {
@@ -175,28 +190,11 @@ export default async function JobsPage({
                       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                         <div className="flex items-start gap-6 flex-1 min-w-0">
                           <div className="w-16 h-16 rounded-2xl bg-navy/5 border border-slate-100 flex items-center justify-center shrink-0 shadow-inner group-hover:bg-teal/5 transition-all duration-300 overflow-hidden">
-                            {job.organization.logoUrl ? (
-                              <img 
-                                src={job.organization.logoUrl} 
-                                alt={job.organization.companyName} 
-                                className="w-full h-full object-cover rounded-2xl"
-                                onError={(e) => {
-                                  // Fallback to stylized initials if image fails to load
-                                  (e.target as HTMLImageElement).style.display = 'none';
-                                  const parent = (e.target as HTMLImageElement).parentElement;
-                                  if (parent) {
-                                    const fallback = document.createElement('div');
-                                    fallback.className = 'w-full h-full flex items-center justify-center bg-navy text-white text-xl font-black font-heading';
-                                    fallback.innerText = job.organization.companyName.substring(0, 2).toUpperCase();
-                                    parent.appendChild(fallback);
-                                  }
-                                }}
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-navy text-white text-xl font-black font-heading">
-                                {job.organization.companyName.substring(0, 2).toUpperCase()}
-                              </div>
-                            )}
+                          <CompanyLogo
+                            logoUrl={job.organization.logoUrl}
+                            companyName={job.organization.companyName}
+                            textClassName="text-xl"
+                          />
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-3 mb-1">
@@ -238,12 +236,17 @@ export default async function JobsPage({
                              Posted {new Date(job.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
                            </span>
                         </div>
-                        <Link 
-                          href={`/jobs/${job.id}`}
-                          className="bg-navy text-white font-black text-xs uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-teal transition-all shadow-xl shadow-navy/10 active:scale-95"
-                        >
-                          Details
-                        </Link>
+                        <div className="flex items-center gap-2">
+                          {session?.user && (
+                            <SaveJobButton jobId={job.id} initialSaved={savedJobIds.includes(job.id)} className="p-3 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-2xl transition-all cursor-pointer border border-transparent hover:border-rose-100" />
+                          )}
+                          <Link 
+                            href={`/jobs/${job.id}`}
+                            className="bg-navy text-white font-black text-xs uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-teal transition-all shadow-xl shadow-navy/10 active:scale-95"
+                          >
+                            Details
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   ))}

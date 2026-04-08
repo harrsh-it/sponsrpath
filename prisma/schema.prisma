@@ -49,7 +49,6 @@ model User {
   
   organization  Organization?
   jobSeeker     JobSeeker?
-  notifications Notification[]
 }
 
 model VerificationToken {
@@ -72,8 +71,10 @@ model Organization {
   location       String?
   contactEmail   String?
   sponsorStatus  String @default("No Sponsorship Data")
+  companySize    String? // e.g. "1-10", "11-50", etc.
   
   jobPosts       JobPost[]
+  outreachSent   TalentOutreach[] @relation("OutreachFromOrg")
 }
 
 model JobSeeker {
@@ -89,7 +90,12 @@ model JobSeeker {
   headline   String?
   phone      String?
   city       String?
+  avatarUrl  String?   // Profile photo
   relocatable String? // "Yes", "No", "Remote only"
+
+  // Talent Showcase
+  isPublic            Boolean @default(false)  // Show in talent showcase
+  visaSponsorRequired Boolean @default(false)  // Candidate needs visa sponsorship
   
   // 7. Resume & Portfolio
   portfolioUrl String?
@@ -119,6 +125,8 @@ model JobSeeker {
   languages        Language[]
   applications     JobApplication[]
   interviews       Interview[]
+  savedJobs        SavedJob[]
+  outreachReceived TalentOutreach[] @relation("OutreachToSeeker")
 }
 
 model Skill {
@@ -183,12 +191,47 @@ model JobPost {
   jobType          String   @default("FULL_TIME") // INTERNSHIP, GRADUATE_SCHEME, FULL_TIME
   locationType     String   @default("ONSITE") // REMOTE, HYBRID, ONSITE
   locationName     String?  // e.g., "London", "Manchester"
+  city             String?
+  state            String?
+  country          String?  @default("United Kingdom")
+  
+  // Salary
+  currency         String   @default("GBP")
+  salaryType       String   @default("YEARLY") // MONTHLY, YEARLY, HOURLY
+  benefits         String?  // Text description of benefits
+  equityBonus      String?  // Optional: Equity / Bonus
+  
+  // Requirements
+  requiredSkills   String?  // Comma-separated tags
+  minExperience    Int?
+  maxExperience    Int?
+  education        String?
+  certifications   String?
+  
+  // Responsibilities
+  responsibilities String?  // Stringified JSON array
+  
+  // Application
+  openings         Int      @default(1)
+  howToApply       String   @default("INTERNAL") // INTERNAL, EXTERNAL
+  externalUrl      String?
+  contactEmail     String?
+  
+  // Company Info (at time of posting)
+  companyName      String?
+  companyDescription String?
+  websiteUrl       String?
+  industry         String?
+  logoUrl          String?
+  
   isActive         Boolean  @default(true)
+  closingDate      DateTime?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
   applications     JobApplication[]
   interviews       Interview[]
+  savedJobs        SavedJob[]
 }
 
 model JobApplication {
@@ -197,21 +240,11 @@ model JobApplication {
   jobPost     JobPost  @relation(fields: [jobPostId], references: [id], onDelete: Cascade)
   jobSeekerId String
   jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
-  status      String   @default("Applied") // Applied, Viewed, Interview, Rejected, Offer
+  status      String   @default("Applied") // Applied, Phone Screen, Interview, Offer, Rejected
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@unique([jobPostId, jobSeekerId])
-}
-
-model Notification {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  text      String
-  type      String   @default("info") // info, match, interview, offer
-  isRead    Boolean  @default(false)
-  createdAt DateTime @default(now())
 }
 
 model Interview {
@@ -225,4 +258,30 @@ model Interview {
   round       String   @default("Round 1")
   status      String   @default("Scheduled") // Scheduled, Completed, Cancelled
   createdAt   DateTime @default(now())
+}
+
+model SavedJob {
+  id          String   @id @default(cuid())
+  jobSeekerId String
+  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
+  jobPostId   String
+  jobPost     JobPost  @relation(fields: [jobPostId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([jobSeekerId, jobPostId])
+}
+
+model TalentOutreach {
+  id            String    @id @default(cuid())
+  orgId         String
+  organization  Organization @relation("OutreachFromOrg", fields: [orgId], references: [id], onDelete: Cascade)
+  jobSeekerId   String
+  jobSeeker     JobSeeker @relation("OutreachToSeeker", fields: [jobSeekerId], references: [id], onDelete: Cascade)
+  message       String
+  interviewDate DateTime?
+  status        String    @default("Pending") // Pending, Accepted, Declined, Scheduled
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([orgId, jobSeekerId])
 }

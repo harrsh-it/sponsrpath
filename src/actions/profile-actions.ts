@@ -33,6 +33,7 @@ export async function updateJobSeekerProfile(data: any) {
           city: data.city || jobSeeker.city,
           relocatable: data.relocatable || jobSeeker.relocatable,
           bio: data.bio || jobSeeker.bio,
+          avatarUrl: data.avatarUrl || jobSeeker.avatarUrl,
           portfolioUrl: data.portfolioUrl || jobSeeker.portfolioUrl,
           githubUrl: data.githubUrl || jobSeeker.githubUrl,
           linkedinUrl: data.linkedinUrl || jobSeeker.linkedinUrl,

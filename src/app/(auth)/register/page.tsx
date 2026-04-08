@@ -42,41 +42,17 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left side cover */ }
-      <div className="hidden lg:flex w-1/2 bg-navy text-white flex-col justify-between p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2670&auto=format&fit=crop')] bg-cover bg-center opacity-10"></div>
-        <div className="absolute inset-0 bg-linear-to-t from-navy to-navy/40"></div>
-        
-        <div className="relative z-10">
-          <Link href="/" className="text-2xl font-bold font-heading tracking-tight flex items-center gap-2">
-            <span className="text-amber-light">Sponsrpath</span>
-          </Link>
-        </div>
-
-        <div className="relative z-10 max-w-md">
-          <h1 className="text-5xl font-heading font-black leading-tight mb-6">
-            Your journey to global talent starts here.
-          </h1>
-          <p className="text-lg text-white/80 font-medium">
-            Create an account to discover top tier candidates requiring visa sponsorship, or find companies willing to sponsor your career.
-          </p>
-        </div>
-        
-        <div className="relative z-10 text-sm text-white/60 font-semibold uppercase tracking-widest">
-          © {new Date().getFullYear()} SponsorPath.
-        </div>
-      </div>
-
-      {/* Right side form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50 relative py-12 overflow-y-auto">
-        <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl shadow-navy/5 overflow-hidden border border-slate-100 p-10 my-auto">
+    <div className="min-h-screen flex items-center justify-center bg-black/1    5 p-4  "> 
+      <div className="w-full max-w-lg bg-white rounded-3xl  overflow-hidden border border-slate-100 p-8 md:p-12 animate-in fade-in zoom-in duration-500 my-auto">
           
           <div className="mb-10 text-center">
-            <h2 className="text-3xl font-heading font-black text-navy">
+            <Link href="/" className="inline-flex items-center gap-1.5 mb-8 group">
+              <span className="text-2xl font-heading font-black tracking-tight text-[#06507c] group-hover:text-teal transition-colors">Sponsrpath</span>
+            </Link>
+            <h2 className="text-3xl font-heading font-semibold text-navy">
               Create an account
             </h2>
-            <p className="text-slate-500 mt-2 font-medium">Join SponsrPath today</p>
+            <p className="text-slate-500 mt-2 font-medium">Join Sponsrpath today</p>
           </div>
 
           {error && (
@@ -85,7 +61,7 @@ export default function RegisterPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
                 I am a...
@@ -96,26 +72,26 @@ export default function RegisterPage() {
                   onClick={() => setRole("JOB_SEEKER")}
                   className={`flex flex-col items-center justify-center p-5 border rounded-2xl cursor-pointer transition-all ${
                     role === "JOB_SEEKER" 
-                      ? "border-teal bg-teal/5 text-navy ring-4 ring-teal/5" 
-                      : "border-slate-100 bg-white text-slate-500 hover:border-slate-200"
+                      ? "border-navy bg-navy/10  text-navy ring-navy/10" 
+                      : "border-slate-400 bg-white text-slate-500 hover:border-slate-200"
                   }`}
                 >
-                  <UserCircle className={`h-10 w-10 mb-2 ${role === "JOB_SEEKER" ? "text-teal" : "text-slate-300"}`} />
-                  <span className="font-semibold text-xs uppercase tracking-widest">Job Seeker</span>
-                  <span className="text-[10px] text-slate-400 mt-1 font-semibold">Seeking Sponsor</span>
+                  <UserCircle className={`h-10 w-10 mb-2 ${role === "JOB_SEEKER" ? "text-navy" : "text-slate-500"}`} />
+                  <span className="font-semibold text-sm uppercase tracking-widest">Job Seeker</span>
+                  <span className="text-xs   text-slate-400 mt-1 font-semibold">Seeking Sponsor</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setRole("ORGANIZATION")}
                   className={`flex flex-col items-center justify-center p-5 border rounded-2xl cursor-pointer transition-all ${
                     role === "ORGANIZATION" 
-                      ? "border-amber bg-amber/5 text-navy ring-4 ring-amber/5" 
-                      : "border-slate-100 bg-white text-slate-500 hover:border-slate-200"
+                      ? "border-navy bg-navy/10 text-navy ring-navy/10" 
+                      : "border-slate-400 bg-white text-slate-500 hover:border-slate-200"
                   }`}
                 >
-                  <Building2 className={`h-10 w-10 mb-2 ${role === "ORGANIZATION" ? "text-amber" : "text-slate-300"}`} />
-                  <span className="font-semibold text-xs uppercase tracking-widest">Employer</span>
-                  <span className="text-[10px] text-slate-400 mt-1 font-semibold">Hiring Talent</span>
+                  <Building2 className={`h-10 w-10 mb-2 ${role === "ORGANIZATION" ? "text-navy" : "text-slate-500"}`} />
+                  <span className="font-semibold text-sm  uppercase tracking-widest">Employer</span>
+                  <span className="text-xs text-slate-400 mt-1 font-semibold">Hiring Talent</span>
                 </button>
               </div>
             </div>
@@ -182,7 +158,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-2xl shadow-xl shadow-teal/20 text-sm font-semibold text-white bg-teal hover:bg-navy focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed mt-4 uppercase tracking-widest"
+              className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-2xl  text-sm font-semibold text-white bg-navy hover:bg-navy/80  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed mt-4 uppercase tracking-widest"
             >
               {loading ? "Creating..." : "Create Account"}
               {!loading && <ArrowRight className="h-4 w-4" />}
@@ -196,7 +172,6 @@ export default function RegisterPage() {
             </Link>
           </p>
         </div>
-      </div>
     </div>
   )
 }

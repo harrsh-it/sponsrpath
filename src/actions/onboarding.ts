@@ -80,6 +80,7 @@ export async function completeOrganizationOnboarding(formData: FormData) {
   const industry = formData.get("industry") as string
   const website = formData.get("website") as string
   const logoUrl = formData.get("logoUrl") as string
+  const companySize = formData.get("companySize") as string
 
   if (!companyName) return { error: "Company name is required" }
 
@@ -92,13 +93,15 @@ export async function completeOrganizationOnboarding(formData: FormData) {
         companyName,
         industry,
         website,
-        logoUrl
+        logoUrl,
+        companySize
       },
       update: {
         companyName,
         industry,
         website,
-        logoUrl
+        logoUrl,
+        companySize
       }
     })
     revalidatePath("/dashboard/organization")
@@ -121,6 +124,7 @@ export async function updateOrganizationProfile(formData: FormData) {
   const location = formData.get("location") as string
   const contactEmail = formData.get("contactEmail") as string
   const logoUrl = formData.get("logoUrl") as string
+  const companySize = formData.get("companySize") as string
 
   if (!companyName) return { error: "Company name is required" }
 
@@ -134,6 +138,7 @@ export async function updateOrganizationProfile(formData: FormData) {
         description,
         location,
         contactEmail,
+        companySize,
         ...(logoUrl ? { logoUrl } : {})
       }
     })

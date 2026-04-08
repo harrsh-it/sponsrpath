@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { LayoutDashboard, LogOut, User, ChevronDown } from "lucide-react"
 import { signOutUser } from "@/actions/auth"
 
@@ -51,70 +50,70 @@ export default function NavbarClient({ user }: NavbarClientProps) {
 
         {/* Logo */}
         <Link href="/" className="text-2xl font-black font-heading tracking-tight shrink-0 flex items-center gap-1 group">
-          <span className="text-navy group-hover:text-teal transition-colors">Sponsr</span>
-          <span className="text-teal group-hover:text-navy transition-colors">Path</span>
+          <span className="text-[#06507c] group-hover:text-teal transition-colors">Sponsrpath</span>
+          
         </Link>
 
         {/* Center Links — hidden on mobile */}
-        <div className="hidden md:flex items-center gap-6 lg:gap-10 text-sm lg:text-base font-black uppercase tracking-widest text-slate-500">
+        <div className="hidden md:flex items-center gap-6 lg:gap-10 text-sm lg:text-base font-bold uppercase tracking-widest text-slate-500">
           <Link href="/jobs" className="hover:text-teal transition-colors">Find Jobs</Link>
           <a href="#employers" className="hover:text-teal transition-colors">For Employers</a>
-          <a href="#talent" className="hover:text-teal transition-colors">Talent</a>
+          <Link href="/talent" className="hover:text-teal transition-colors">Find Talent</Link>
           <a href="#resources" className="hover:text-teal transition-colors">Resources</a>
         </div>
 
         {/* Right Section — desktop */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-6  cursor-pointer">
           {user ? (
             <div className="relative" ref={dropdownRef}>
-              <button
+              <button 
                 onClick={() => setDropdownOpen((v) => !v)}
                 className="flex items-center gap-3 px-4 py-2 rounded-2xl hover:bg-slate-50 transition-all border border-slate-100 group shadow-sm bg-white"
               >
                 {/* Avatar */}
                 {user.image && !imageError ? (
-                  <Image
+                  <img
                     src={user.image}
                     alt={user.name ?? "User"}
                     width={32}
                     height={32}
-                    className="rounded-xl object-cover ring-2 ring-white shadow-sm"
+                    className="rounded-xl object-cover ring-2 ring-white shadow-sm w-8 h-8"
                     onError={() => setImageError(true)}
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-xl bg-linear-to-br from-navy to-teal flex items-center justify-center text-white text-[10px] font-black shrink-0 shadow-sm uppercase tracking-tighter">
+                  <div className="w-8 h-8 rounded-xl bg-linear-to-br from-navy to-teal flex items-center justify-center text-white text-[10px] font-bold shrink-0 shadow-sm uppercase tracking-tighter">
                     {initials}
                   </div>
                 )}
                 <div className="text-left hidden lg:block">
-                  <p className="text-xs font-black text-navy leading-none uppercase tracking-widest">{user.name?.split(" ")[0] ?? "Account"}</p>
-                  <p className="text-[10px] text-slate-400 mt-1 leading-none font-bold truncate max-w-[100px]">{user.role.replace("_", " ")}</p>
+                  <p className="text-md font-bold text-navy">{user.name?.split(" ")[0] ?? "Account"}</p>
+                  <p className="text-sm  text-slate-400 mt-1 leading-none font-bold truncate max-w-[100px]">{user.role.replace("_", " ")}</p>
                 </div>
                 <ChevronDown className={`h-3 w-3 text-slate-300 transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`} />
               </button>
 
               {/* Dropdown */}
               {dropdownOpen && (
-                <div className="absolute right-0 top-full mt-3 w-64 bg-white rounded-3xl shadow-2xl shadow-navy/10 border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute right-0 top-full mt-3 w-64 bg-white rounded-3xl shadow-2xl shadow-navy/10 border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200 ">
                   <div className="px-6 py-5 border-b border-slate-50 bg-slate-50/50">
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Signed in as</p>
-                    <p className="text-sm font-black text-navy truncate">{user.email}</p>
+                    <p className="text-sm  text-slate-400 font-bold  mb-1">Signed in as</p>
+                    <p className="text-sm font-bold text-navy truncate">{user.email}</p>
                   </div>
                   <div className="py-2">
                     <Link
                       href={dashboardHref}
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-6 py-3.5 text-xs font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 hover:text-teal transition-all"
+                      className="flex items-center gap-3 px-6 py-3.5 text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-teal transition-all"
                     >
-                      <LayoutDashboard className="h-4 w-4" />
+                      <LayoutDashboard className="h-6 w-6" />
                       Dashboard
                     </Link>
                     <Link
                       href={user.role === "JOB_SEEKER" ? "/dashboard/job-seeker/profile" : "/dashboard/organization"}
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-6 py-3.5 text-xs font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 hover:text-teal transition-all"
+                      className="flex items-center gap-3 px-6 py-3.5 text-sm font-bold  text-slate-600 hover:bg-slate-50 hover:text-teal transition-all"
                     >
-                      <User className="h-4 w-4" />
+                      <User className="h-6 w-6" />
                       My Profile
                     </Link>
                   </div>
@@ -122,7 +121,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                     <form action={signOutUser}>
                       <button
                         type="submit"
-                        className="w-full flex items-center gap-3 px-6 py-3.5 text-xs font-black uppercase tracking-widest text-rose-500 hover:bg-rose-50 transition-all cursor-pointer"
+                        className="w-full flex items-center gap-3 px-6 py-3.5 text-xs font-bold uppercase tracking-widest text-rose-500 hover:bg-rose-50 transition-all cursor-pointer"
                       >
                         <LogOut className="h-4 w-4" />
                         Sign Out
@@ -137,14 +136,14 @@ export default function NavbarClient({ user }: NavbarClientProps) {
               <Link
                 href="/login"
                 prefetch={false}
-                className="text-sm font-black uppercase tracking-widest text-slate-600 hover:text-teal transition-colors"
+                className="text-sm font-bold  uppercase tracking-widest text-slate-600 hover:text-teal transition-colors"
               >
                 Sign In
               </Link>
               <Link
                 href="/register"
                 prefetch={false}
-                className="bg-linear-to-r from-navy to-teal text-white text-xs font-black uppercase tracking-widest px-6 py-3 rounded-2xl shadow-xl shadow-teal/20 hover:shadow-navy/20 hover:-translate-y-0.5 transition-all whitespace-nowrap active:scale-95"
+                className="bg-[#06507c] text-white text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-2xl  hover:shadow-navy/20 hover:-translate-y-0.5 transition-all whitespace-nowrap active:scale-95"
               >
                 Get Started
               </Link>
@@ -171,13 +170,13 @@ export default function NavbarClient({ user }: NavbarClientProps) {
           {[
             { label: "Find Jobs", href: "/jobs" },
             { label: "For Employers", href: "#employers" },
-            { label: "Talent Showcase", href: "#talent" },
+            { label: "Find Talent", href: "/talent" },
             { label: "Resources", href: "#resources" },
           ].map((item) => (
             <Link
               key={item.label}
               href={item.href}
-              className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-teal py-4 border-b border-dashed border-slate-100 transition-colors"
+              className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-teal py-4 border-b border-dashed border-slate-100 transition-colors"
               onClick={() => setMenuOpen(false)}
             >
               {item.label}
@@ -190,33 +189,33 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                 {/* Mobile user info */}
                 <div className="flex items-center gap-4 py-4 px-4 bg-slate-50 rounded-2xl border border-slate-100">
                   {user.image && !imageError ? (
-                    <Image 
-                      src={user.image} 
-                      alt={user.name ?? "User"} 
-                      width={44} 
-                      height={44} 
-                      className="rounded-xl object-cover" 
+                    <img
+                      src={user.image}
+                      alt={user.name ?? "User"}
+                      width={44}
+                      height={44}
+                      className="rounded-xl object-cover w-11 h-11"
                       onError={() => setImageError(true)}
                     />
                   ) : (
-                    <div className="w-11 h-11 rounded-xl bg-linear-to-br from-navy to-teal flex items-center justify-center text-white text-xs font-black uppercase tracking-tighter">
+                    <div className="w-11 h-11 rounded-xl bg-linear-to-br from-navy to-teal flex items-center justify-center text-white text-xs font-bold uppercase tracking-tighter">
                       {initials}
                     </div>
                   )}
                   <div>
-                    <p className="text-sm font-black text-navy uppercase tracking-widest">{user.name}</p>
+                    <p className="text-sm font-bold text-navy uppercase tracking-widest">{user.name}</p>
                     <p className="text-xs text-slate-400 font-bold italic">{user.role.replace("_", " ")}</p>
                   </div>
                 </div>
                 <Link
                   href={dashboardHref}
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-teal py-2"
+                  className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-teal py-2"
                 >
                   <LayoutDashboard className="h-4 w-4" /> Dashboard
                 </Link>
                 <form action={signOutUser}>
-                  <button type="submit" className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-rose-500 py-2 cursor-pointer">
+                  <button type="submit" className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-rose-500 py-2 cursor-pointer">
                     <LogOut className="h-4 w-4" /> Sign Out
                   </button>
                 </form>
@@ -226,7 +225,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                 <Link
                   href="/login"
                   prefetch={false}
-                  className="block text-center text-xs font-black uppercase tracking-widest text-slate-600 py-2"
+                  className="block text-center text-xs font-bold uppercase tracking-widest text-slate-600 py-2"
                   onClick={() => setMenuOpen(false)}
                 >
                   Sign In
@@ -234,7 +233,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                 <Link
                   href="/register"
                   prefetch={false}
-                  className="block w-full bg-linear-to-r from-navy to-teal text-white text-xs font-black uppercase tracking-widest px-6 py-4 rounded-2xl shadow-xl shadow-teal/20 text-center"
+                  className="block w-full bg-linear-to-r from-navy to-teal text-white text-xs font-bold uppercase tracking-widest px-6 py-4 rounded-2xl shadow-xl shadow-teal/20 text-center"
                   onClick={() => setMenuOpen(false)}
                 >
                   Get Started

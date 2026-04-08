@@ -15,11 +15,11 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen flex bg-slate-50">
+    <div className="min-h-screen flex flex-row bg-black/15">
       <Suspense fallback={<div className="w-64 bg-navy min-h-screen shrink-0" />}>
         <Sidebar role={(session!.user as any).role} />
       </Suspense>
-      <main className="flex-1 p-8 overflow-auto">
+      <main className="flex-1 p-8 overflow-auto bg-white rounded-4xl m-2">
         {children}
       </main>
     </div>

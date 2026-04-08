@@ -41,30 +41,6 @@ export default async function JobSeekerSettingsPage() {
           </div>
         </div>
 
-        {/* Notifications */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-amber/10 rounded-lg"><Bell className="h-5 w-5 text-amber" /></div>
-            <h2 className="text-lg font-bold text-navy">Notifications</h2>
-          </div>
-          <div className="space-y-3">
-            {[
-              { label: "New job matches", desc: "Get notified when new visa-sponsored jobs match your profile" },
-              { label: "Application updates", desc: "Updates on your job applications" },
-            ].map((item) => (
-              <div key={item.label} className="flex justify-between items-start py-2 border-b border-slate-100 last:border-0">
-                <div>
-                  <p className="text-sm font-medium text-navy">{item.label}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">{item.desc}</p>
-                </div>
-                <div className="ml-4 w-10 h-6 bg-slate-200 rounded-full relative cursor-pointer shrink-0">
-                  <div className="w-4 h-4 bg-white rounded-full absolute top-1 left-1 shadow-sm" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Danger Zone */}
         <div className="bg-white rounded-2xl shadow-sm border border-red-100 p-6">
           <div className="flex items-center gap-3 mb-4">

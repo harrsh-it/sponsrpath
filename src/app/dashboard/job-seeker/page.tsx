@@ -16,6 +16,7 @@ export default async function JobSeekerDashboard() {
       education: true,
       certifications: true,
       languages: true,
+      savedJobs: { select: { jobPostId: true } },
       applications: {
         include: {
           jobPost: {
@@ -45,13 +46,6 @@ export default async function JobSeekerDashboard() {
   if (!jobSeeker) {
     redirect("/onboarding/job-seeker")
   }
-
-  // Fetch Notifications
-  const notifications = await prisma.notification.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: 'desc' },
-    take: 5
-  })
 
   // Basic Job Recommendation Logic: Find jobs that mention seeker's skills
   const seekerSkillNames = jobSeeker.skills.map((s: { name: string }) => s.name.toLowerCase())
@@ -109,9 +103,9 @@ export default async function JobSeekerDashboard() {
         checklist
       }}
       recommendedJobs={recommendedJobs}
+      savedJobIds={jobSeeker.savedJobs.map((sj: { jobPostId: string }) => sj.jobPostId)}
       applications={jobSeeker.applications}
       interviews={jobSeeker.interviews}
-      notifications={notifications}
     />
   )
 }

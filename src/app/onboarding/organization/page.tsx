@@ -39,18 +39,16 @@ export default function OrganizationOnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 py-12">
-      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl shadow-navy/5 overflow-hidden border border-slate-100 my-auto">
-        
+    <div className="min-h-screen bg-black/15 flex flex-col items-center justify-center p-6 py-6">
+      <div className="w-full max-w-2xl bg-white rounded-3xl  overflow-hidden  my-auto">
         <div className="bg-navy p-12 text-white relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2669&auto=format&fit=crop')] bg-cover bg-center opacity-10"></div>
-          <div className="absolute inset-0 bg-linear-to-t from-navy to-navy/40"></div>
+          <div className="absolute inset-0 bg-white"></div>
           <div className="relative z-10 flex flex-col items-center text-center">
-            <div className="w-20 h-20 bg-amber/20 rounded-2xl flex items-center justify-center mb-6 text-amber border border-amber/30 shadow-xl backdrop-blur-sm">
+            <div className="w-20 h-20 bg-amber/10 rounded-2xl flex items-center justify-center mb-6 text-amber border border-amber/30 shadow-xl backdrop-blur-sm">
               <Building2 className="h-10 w-10" />
             </div>
-            <h1 className="text-4xl font-black font-heading mb-3">Setup Employer Profile</h1>
-            <p className="text-white/80 max-w-md font-medium leading-relaxed">
+            <h1 className="text-4xl font-black text-navy font-heading mb-3">Setup Employer Profile</h1>
+            <p className="text-navy max-w-md font-medium leading-relaxed">
               Complete your company details to start posting jobs and connecting with international talent.
             </p>
           </div>
@@ -72,7 +70,7 @@ export default function OrganizationOnboardingPage() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Building className="h-5 w-5 text-slate-300" />
+                    <Building className="h-5 w-5 text-slate-900" />
                   </div>
                   <input
                     type="text"
@@ -80,7 +78,7 @@ export default function OrganizationOnboardingPage() {
                     id="companyName"
                     required
                     className="block w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-navy placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber/20 focus:border-amber focus:bg-white transition-all font-medium"
-                    placeholder="Acme Corp Ltd"
+                    placeholder="Company Name"
                   />
                 </div>
               </div>
@@ -92,9 +90,9 @@ export default function OrganizationOnboardingPage() {
                 <select
                   name="industry"
                   id="industry"
-                  className="block w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-navy focus:outline-none focus:ring-2 focus:ring-amber/20 focus:border-amber focus:bg-white transition-all font-medium appearance-none"
+                  className="block w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl   text-black   cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber/20 focus:border-amber focus:bg-white transition-all font-medium appearance-none"
                 >
-                  <option value="">Select Industry...</option>
+                  <option value="">Select Industry... </option>
                   <option value="Technology">Technology</option>
                   <option value="Healthcare">Healthcare</option>
                   <option value="Finance">Finance</option>
@@ -110,7 +108,7 @@ export default function OrganizationOnboardingPage() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Globe className="h-5 w-5 text-slate-300" />
+                    <Globe className="h-5 w-5 text-slate-900" />
                   </div>
                   <input
                     type="url"

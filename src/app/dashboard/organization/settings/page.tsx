@@ -40,23 +40,6 @@ export default async function OrgSettingsPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-amber/10 rounded-lg"><Bell className="h-5 w-5 text-amber" /></div>
-            <h2 className="text-lg font-bold text-navy">Notifications</h2>
-          </div>
-          <div className="space-y-3">
-            {["New applications received", "Job listing expiry reminders"].map((label) => (
-              <div key={label} className="flex justify-between items-center py-2 border-b border-slate-100 last:border-0">
-                <span className="text-sm font-medium text-navy">{label}</span>
-                <div className="w-10 h-6 bg-amber/20 rounded-full relative cursor-pointer">
-                  <div className="w-4 h-4 bg-amber rounded-full absolute top-1 right-1 shadow-sm" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div className="bg-white rounded-2xl shadow-sm border border-red-100 p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-red-50 rounded-lg"><Trash2 className="h-5 w-5 text-red-500" /></div>

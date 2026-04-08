@@ -8,6 +8,7 @@ import {
   Globe, User, Heart, ChevronRight
 } from "lucide-react"
 import ProfileAvatar from "@/components/dashboard/ProfileAvatar"
+import { VisibilityToggle } from "@/components/talent/VisibilityToggle"
 
 export default async function JobSeekerProfilePage() {
   const session = await auth()
@@ -47,12 +48,17 @@ export default async function JobSeekerProfilePage() {
         </Link>
       </div>
 
+      {/* Visibility toggle */}
+      <div className="mb-8">
+        <VisibilityToggle isPublic={jobSeeker.isPublic} seekerId={jobSeeker.id} />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* LEFT COLUMN: Basic Info & Contacts */}
         <div className="md:col-span-1 space-y-6">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col items-center text-center">
             <ProfileAvatar 
-              imageUrl={session.user.image} 
+              imageUrl={jobSeeker.avatarUrl || session.user.image || null} 
               name={fullName} 
               className="w-28 h-28 mb-6"
             />

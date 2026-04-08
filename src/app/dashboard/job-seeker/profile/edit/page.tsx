@@ -17,6 +17,7 @@ export default function EditProfilePage() {
   const [formData, setFormData] = useState<any>({
     firstName: "", lastName: "", headline: "", phone: "", city: "", relocatable: "No",
     bio: "",
+    avatarUrl: "",
     skills: [], // { name, proficiency }
     experience: [], // { title, company, startDate, endDate, isCurrent, empType, location, responsibilities }
     education: [], // { degree, institution, yearOfPassing, grade }
@@ -26,6 +27,9 @@ export default function EditProfilePage() {
     languages: [], // { name, proficiency }
     gender: "", dob: "", differentlyAbled: "", veteranStatus: ""
   })
+
+  const [avatarUploading, setAvatarUploading] = useState(false)
+  const [avatarError, setAvatarError] = useState<string | null>(null)
 
   // We could fetch existing data here in a real app, but for now we start blank or assume it's loaded
   
@@ -101,17 +105,52 @@ export default function EditProfilePage() {
           </div>
           <div className="p-8 space-y-6">
             <div className="flex gap-6 items-center border-b border-slate-100 pb-6">
-              <div className="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300">
-                <User className="h-8 w-8" />
-              </div>
+              {/* Avatar preview */}
+              <label className="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center border-2 border-dashed border-slate-300 overflow-hidden cursor-pointer hover:border-teal transition-colors relative group">
+                {formData.avatarUrl ? (
+                  <img src={formData.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <User className="h-8 w-8 text-slate-400" />
+                )}
+                <div className="absolute inset-0 bg-navy/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Upload className="h-5 w-5 text-white" />
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  disabled={avatarUploading}
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    setAvatarUploading(true)
+                    setAvatarError(null)
+                    const fd = new FormData()
+                    fd.append("file", file)
+                    try {
+                      const res = await fetch("/api/upload", { method: "POST", body: fd })
+                      const data = await res.json()
+                      if (res.ok && data.url) {
+                        handleInputChange("avatarUrl", data.url)
+                      } else {
+                        setAvatarError(data.error || "Upload failed")
+                      }
+                    } catch {
+                      setAvatarError("Upload failed")
+                    } finally {
+                      setAvatarUploading(false)
+                    }
+                  }}
+                />
+              </label>
               <div>
                 <p className="font-semibold text-slate-700 mb-1">Profile photo</p>
-                <div className="flex gap-3">
-                  <button type="button" className="text-sm px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors flex items-center gap-2">
-                    <Upload className="h-4 w-4" /> Upload Custom Photo
-                  </button>
-                </div>
-                <p className="text-xs text-slate-400 mt-2">JPG, PNG. Max 2MB.</p>
+                <p className="text-xs text-slate-400 mt-1">Click to upload · JPG, PNG, max 5 MB</p>
+                {avatarUploading && <p className="text-xs text-teal font-bold mt-1">Uploading…</p>}
+                {avatarError && <p className="text-xs text-rose-500 font-bold mt-1">{avatarError}</p>}
+                {formData.avatarUrl && !avatarUploading && (
+                  <p className="text-xs text-emerald-600 font-bold mt-1">✓ Photo uploaded – save to confirm</p>
+                )}
               </div>
             </div>
 

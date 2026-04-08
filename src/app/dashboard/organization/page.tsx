@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { PlusCircle, Search, Edit2, Eye } from "lucide-react"
 import { DeleteJobButton } from "@/components/dashboard/DeleteJobButton"
+import { CompanyLogo } from "@/components/ui/CompanyLogo"
 
 export default async function OrganizationDashboard() {
   const session = await auth()
@@ -39,36 +40,22 @@ export default async function OrganizationDashboard() {
       <div className="flex justify-between items-start mb-8 gap-6">
         <div className="flex items-center gap-6">
           <div className="w-20 h-20 bg-navy text-white rounded-3xl flex items-center justify-center text-2xl font-black shadow-xl shadow-navy/10 overflow-hidden shrink-0 border border-slate-100">
-            {organization.logoUrl ? (
-              <img 
-                src={organization.logoUrl} 
-                alt={organization.companyName} 
-                className="w-full h-full object-cover" 
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                  const parent = (e.target as HTMLImageElement).parentElement;
-                  if (parent) {
-                    const fallback = document.createElement('div');
-                    fallback.className = 'w-full h-full flex items-center justify-center bg-navy text-white text-2xl font-black font-heading';
-                    fallback.innerText = organization.companyName.substring(0, 2).toUpperCase();
-                    parent.appendChild(fallback);
-                  }
-                }}
-              />
-            ) : (
-              organization.companyName.substring(0, 2).toUpperCase()
-            )}
+            <CompanyLogo
+              logoUrl={organization.logoUrl}
+              companyName={organization.companyName}
+              textClassName="text-2xl"
+            />
           </div>
           <div>
-            <h1 className="text-4xl font-heading font-black text-navy tracking-tight leading-tight">Overview</h1>
+            <h1 className="text-4xl font-heading font-semibold text-navy tracking-tight leading-tight">Overview</h1>
             <p className="text-slate-500 font-bold mt-1">
-              Welcome back, <span className="text-teal">{organization.companyName}</span>
+              Welcome back, <span className="text-navy">{organization.companyName}</span>
             </p>
           </div>
         </div>
         <Link
           href="/dashboard/organization/jobs/create"
-          className="flex items-center gap-2 bg-amber text-navy font-bold px-5 py-2.5 rounded-xl border border-transparent shadow-sm hover:bg-amber/90 hover:shadow transition-all"
+          className="flex items-center gap-2 bg-amber text-navy font-semibold px-5 py-2.5 rounded-xl border border-transparent shadow-sm hover:bg-amber/90 hover:shadow transition-all"
         >
           <PlusCircle className="h-4 w-4" />
           Post New Job
@@ -78,23 +65,23 @@ export default async function OrganizationDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-slate-500 font-medium">Active Listings</h3>
+            <h3 className="text-xl font-bold text-black">Active Listings</h3>
             <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded-md">Live</span>
           </div>
-          <div className="text-4xl font-heading font-bold text-navy">{activeJobs}</div>
+          <div className="text-4xl font-heading font-bold text-black  ">{activeJobs}</div>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-slate-500 font-medium">Expired Listings</h3>
+            <h3 className="text-xl font-bold text-black">Expired Listings</h3>
             <span className="bg-rose-100 text-rose-800 text-xs font-bold px-2 py-1 rounded-md">Draft</span>
           </div>
-          <div className="text-4xl font-heading font-bold text-navy">{expiredJobs}</div>
+          <div className="text-4xl font-heading font-bold text-black">{expiredJobs}</div>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-slate-500 font-medium">Sponsorship Status</h3>
+            <h3 className="text-xl font-bold text-black">Sponsorship Status</h3>
           </div>
           <div className="text-xl font-heading font-bold text-navy truncate">
             {organization.sponsorStatus}
@@ -106,8 +93,8 @@ export default async function OrganizationDashboard() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-          <h2 className="text-lg font-bold font-heading text-navy">Recent Job Postings</h2>
+        <div className="p-6 border-b border-slate-100 flex justify-between items-center ">
+          <h2 className="text-2xl font-bold  text-navy">Recent Job Postings</h2>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input 
@@ -122,11 +109,11 @@ export default async function OrganizationDashboard() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-100">
-                <th className="py-4 px-6 text-sm font-semibold text-slate-500">Job Title</th>
-                <th className="py-4 px-6 text-sm font-semibold text-slate-500">Status</th>
-                <th className="py-4 px-6 text-sm font-semibold text-slate-500">Posted On</th>
-                <th className="py-4 px-6 text-sm font-semibold text-slate-500">Salary Range</th>
-                <th className="py-4 px-6 text-sm font-semibold text-slate-500 text-right">Actions</th>
+                <th className="py-4 px-6 text-lg font-semibold text-slate-500">Job Title</th>
+                <th className="py-4 px-6 text-lg font-semibold text-slate-500">Status</th>
+                <th className="py-4 px-6 text-lg font-semibold text-slate-500">Posted On</th>
+                <th className="py-4 px-6 text-lg font-semibold text-slate-500">Salary Range</th>
+                <th className="py-4 px-6 text-lg font-semibold text-slate-500 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

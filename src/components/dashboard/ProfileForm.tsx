@@ -13,6 +13,7 @@ interface ProfileFormProps {
     location: string | null
     contactEmail: string | null
     logoUrl: string | null
+    companySize: string | null
   }
 }
 
@@ -20,7 +21,8 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
-  const [fileName, setFileName] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [logoPreview, setLogoPreview] = useState<string | null>(initialData.logoUrl)
   const [logoError, setLogoError] = useState(false)
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -30,12 +32,6 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     setSuccess(false)
 
     const formData = new FormData(event.currentTarget)
-    
-    // Simulating file name if changed
-    if (fileName) {
-      formData.set("logoUrl", "") // We let the initials fallback handle it for now
-    }
-
     const result = await updateOrganizationProfile(formData)
 
     if (result?.error) {
@@ -44,15 +40,32 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     } else {
       setSuccess(true)
       setLoading(false)
-      // Clear success after 3 seconds
       setTimeout(() => setSuccess(false), 3000)
     }
   }
 
-  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
-    if (file) {
-      setFileName(file.name)
+    if (!file) return
+
+    setUploading(true)
+    setLogoError(false)
+
+    const fd = new FormData()
+    fd.append("file", file)
+
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: fd })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        setLogoPreview(data.url)
+      } else {
+        setError(data.error || "Upload failed")
+      }
+    } catch {
+      setError("Upload failed – please try again")
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -116,6 +129,26 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
                 <option value="Consumer Goods">Consumer Goods</option>
                 <option value="Manufacturing">Manufacturing</option>
                 <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2" htmlFor="companySize">
+                Company Size
+              </label>
+              <select
+                name="companySize"
+                id="companySize"
+                defaultValue={initialData.companySize || ""}
+                className="block w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-navy focus:outline-none focus:ring-2 focus:ring-amber/20 focus:border-amber focus:bg-white transition-all font-medium appearance-none"
+              >
+                <option value="">Select Size...</option>
+                <option value="1-10">1-10 employees</option>
+                <option value="11-50">11-50 employees</option>
+                <option value="51-200">51-200 employees</option>
+                <option value="201-500">201-500 employees</option>
+                <option value="501-1000">501-1000 employees</option>
+                <option value="1000+">1000+ employees</option>
               </select>
             </div>
           </div>
@@ -213,35 +246,44 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         <div className="col-span-1 md:col-span-2 space-y-6">
            <h3 className="text-sm font-black text-navy uppercase tracking-widest border-b border-slate-100 pb-2">Branding</h3>
            
+           {/* Hidden input carries the uploaded URL into the server action */}
+           <input type="hidden" name="logoUrl" value={logoPreview ?? ""} />
+
            <div className="flex items-center gap-6 p-6 bg-slate-50 rounded-3xl border border-slate-100 overflow-hidden group">
               <div className="w-20 h-20 rounded-2xl bg-navy text-white flex items-center justify-center text-2xl font-black shrink-0 shadow-xl shadow-navy/10 relative overflow-hidden">
-                {initialData.logoUrl && !logoError ? (
-                  <img 
-                    src={initialData.logoUrl} 
-                    alt="Logo" 
-                    className="w-full h-full object-cover" 
+                {logoPreview && !logoError ? (
+                  <img
+                    src={logoPreview}
+                    alt="Logo"
+                    className="w-full h-full object-cover"
                     onError={() => setLogoError(true)}
                   />
                 ) : (
                   initialData.companyName.substring(0, 2).toUpperCase()
                 )}
                 <div className="absolute inset-0 bg-navy/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                  <ImagePlus className="h-6 w-6 text-white" />
-                  <input 
-                    type="file" 
+                  {uploading ? (
+                    <span className="text-white text-[10px] font-black">Uploading…</span>
+                  ) : (
+                    <ImagePlus className="h-6 w-6 text-white" />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
                     onChange={handleFileChange}
-                    className="absolute inset-0 opacity-0 cursor-pointer" 
+                    disabled={uploading}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
                   />
                 </div>
               </div>
               <div>
                 <p className="text-sm font-bold text-navy">Company Logo</p>
                 <p className="text-xs text-slate-500 mt-1 max-w-xs leading-relaxed">
-                  Click the avatar to update your logo. Recommended size: 400x400px.
+                  Click the avatar to update your logo. Recommended: 400×400 px, max 5 MB.
                 </p>
-                {fileName && (
-                  <p className="text-[10px] font-black text-amber uppercase tracking-widest mt-2 flex items-center gap-1.5 animate-in slide-in-from-left-2 duration-300">
-                    <CheckCircle2 className="h-3 w-3" /> New file selected
+                {logoPreview && logoPreview !== initialData.logoUrl && (
+                  <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mt-2 flex items-center gap-1.5">
+                    <CheckCircle2 className="h-3 w-3" /> Logo uploaded – save to confirm
                   </p>
                 )}
               </div>
