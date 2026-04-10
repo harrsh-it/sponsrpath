@@ -119,6 +119,25 @@ export default function OrganizationOnboardingPage() {
                   />
                 </div>
               </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3" htmlFor="companySize">
+                  Company Size
+                </label>
+                <select
+                  name="companySize"
+                  id="companySize"
+                  className="block w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-black cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber/20 focus:border-amber focus:bg-white transition-all font-medium appearance-none"
+                >
+                  <option value="">Select Company Size...</option>
+                  <option value="1-10">1-10 employees</option>
+                  <option value="11-50">11-50 employees</option>
+                  <option value="51-200">51-200 employees</option>
+                  <option value="201-500">201-500 employees</option>
+                  <option value="501-1000">501-1000 employees</option>
+                  <option value="1000+">1000+ employees</option>
+                </select>
+              </div>
             </div>
 
             <div>

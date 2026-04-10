@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { VisaBadge, SponsorStatus } from "@/components/ui/VisaBadge"
 import { CompanyLogo } from "@/components/ui/CompanyLogo"
-import { Search, MapPin, Briefcase, Building2, Globe, Clock, SlidersHorizontal } from "lucide-react"
+import { Search, MapPin, Briefcase, Building2, Globe, Clock, SlidersHorizontal, Zap } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import { Footer } from "@/components/Footer"
 import FilterSidebar from "@/components/jobs/FilterSidebar"
@@ -214,7 +214,27 @@ export default async function JobsPage({
                               <div className="flex items-center gap-1.5 text-xs font-black text-slate-500 uppercase tracking-widest">
                                 <Clock className="h-4 w-4 text-teal" /> {job.jobType?.replace("_", " ").toLowerCase() || "n/a"}
                               </div>
+                              {(job.minExperience !== null && job.minExperience !== undefined) && (
+                                <div className="flex items-center gap-1.5 text-xs font-black text-slate-500 uppercase tracking-widest">
+                                  <Zap className="h-4 w-4 text-amber" /> {job.minExperience}{job.maxExperience ? `-${job.maxExperience}` : "+"} Years Exp
+                                </div>
+                              )}
                             </div>
+
+                            {job.requiredSkills && (
+                              <div className="flex flex-wrap gap-2 mt-5">
+                                {job.requiredSkills.split(",").slice(0, 4).map((skill: string) => (
+                                  <span key={skill} className="px-3 py-1 bg-slate-50 text-slate-500 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-100">
+                                    {skill.trim()}
+                                  </span>
+                                ))}
+                                {job.requiredSkills.split(",").length > 4 && (
+                                  <span className="px-3 py-1 bg-slate-50 text-slate-400 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-100 italic">
+                                    +{job.requiredSkills.split(",").length - 4} more
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-3 shrink-0">

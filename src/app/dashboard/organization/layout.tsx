@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
+import { prisma } from "@/lib/prisma"
 
 export default async function OrganizationLayout({
   children,
@@ -8,7 +9,17 @@ export default async function OrganizationLayout({
 }) {
   const session = await auth()
 
-  if (!session || (session.user as any).role !== "ORGANIZATION") {
+  if (!session) {
+    redirect("/login")
+  }
+
+  // Get source-of-truth role from DB to handle stale sessions
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true }
+  })
+
+  if (user?.role !== "ORGANIZATION") {
     redirect("/dashboard")
   }
 
