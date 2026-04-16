@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { selectRole } from "@/actions/onboarding";
 import { Briefcase, Building2, ArrowRight } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 
 export default async function RoleSelectPage() {
   const session = await auth();
@@ -20,6 +21,9 @@ export default async function RoleSelectPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+      <div className="mb-8">
+        <Logo size="lg" variant="dark" />
+      </div>
       <div className="max-w-3xl w-full text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-heading font-black mb-4 text-navy">Welcome to Sponsrpath!</h1>
         <p className="text-lg text-slate-500 font-medium">To get started, please tell us how you'll be using the platform.</p>

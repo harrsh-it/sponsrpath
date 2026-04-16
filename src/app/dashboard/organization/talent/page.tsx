@@ -13,6 +13,7 @@ interface SearchParams {
   availability?: string
   visaOnly?: string
   page?: string
+  notice?: string
 }
 
 export default async function EmployerTalentSearchPage({
@@ -39,6 +40,7 @@ export default async function EmployerTalentSearchPage({
   if (searchParams.jobType) where.preferredType = searchParams.jobType
   if (searchParams.location) where.city = { contains: searchParams.location }
   if (searchParams.availability) where.availability = searchParams.availability
+  if (searchParams.notice) where.noticePeriod = searchParams.notice
   if (searchParams.visaOnly === "true") where.visaSponsorRequired = true
 
   const seekers = await prisma.jobSeeker.findMany({
@@ -111,7 +113,7 @@ export default async function EmployerTalentSearchPage({
               <p className="text-slate-500 font-medium max-w-xs">Adjust your filters to broaden the search.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1   gap-6">
               {filteredSeekers.map((seeker) => (
                 <div key={seeker.id} className="relative">
                   {outreachMap.has(seeker.id) && (

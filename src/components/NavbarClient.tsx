@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { LayoutDashboard, LogOut, User, ChevronDown } from "lucide-react"
 import { signOutUser } from "@/actions/auth"
+import { Logo } from "./ui/Logo"
 
 interface NavUser {
   name: string | null
@@ -49,10 +50,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
         {/* Logo */}
-        <Link href="/" className="text-2xl font-black font-heading tracking-tight shrink-0 flex items-center gap-1 group">
-          <span className="text-[#06507c] group-hover:text-teal transition-colors">Sponsrpath</span>
-          
-        </Link>
+        <Logo size="md" variant="navy" />
 
         {/* Center Links — hidden on mobile */}
         <div className="hidden md:flex items-center gap-6 lg:gap-10 text-sm lg:text-base font-bold uppercase tracking-widest text-slate-500">

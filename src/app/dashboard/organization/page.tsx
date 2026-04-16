@@ -127,8 +127,20 @@ export default async function OrganizationDashboard() {
                 jobs.map((job) => (
                   <tr key={job.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="py-4 px-6">
-                      <div className="font-semibold text-navy">{job.title}</div>
-                      <div className="text-sm text-slate-500">{job.visaSponsorBadge}</div>
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-navy/5 border border-navy/10 flex items-center justify-center overflow-hidden shrink-0">
+                          <CompanyLogo
+                            logoUrl={organization.logoUrl}
+                            companyName={organization.companyName}
+                            className="w-full h-full"
+                            textClassName="text-xs"
+                          />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-navy leading-tight">{job.title}</div>
+                          <div className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-widest">{job.visaSponsorBadge}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="py-4 px-6">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${

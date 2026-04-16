@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { completeJobSeekerOnboarding } from "@/actions/onboarding"
 import { UploadCloud, ArrowRight, UserCircle } from "lucide-react"
+import { Logo } from "@/components/ui/Logo"
 
 export default function JobSeekerOnboardingPage() {
   const [error, setError] = useState<string | null>(null)
@@ -39,6 +40,9 @@ export default function JobSeekerOnboardingPage() {
 
   return (
     <div className="min-h-screen bg-black/15  flex flex-col items-center justify-center p-6 py-6">
+      <div className="mb-6">
+        <Logo size="lg" variant="dark" />
+      </div>
       <div className="w-full max-w-2xl bg-white rounded-3xl  overflow-hidden border border-slate-100 my-auto">
         <div className=" p-8 text-white relative overflow-hidden">
           <div className="absolute inset-0 "></div>

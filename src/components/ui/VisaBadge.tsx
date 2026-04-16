@@ -65,10 +65,10 @@ export function VisaBadge({ status, className = "", showLabel = true }: VisaBadg
 
   return (
     <div 
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border transition-all hover:shadow-md cursor-help ${details.colorInfo} ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-md font-semibold border transition-all hover:shadow-md cursor-help ${details.colorInfo} ${className}`}
       title={details.tooltip}
     >
-      <Icon className="h-3.5 w-3.5" />
+      <Icon className="h-4 w-4" />
       {showLabel && <span>{details.label}</span>}
     </div>
   )

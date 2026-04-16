@@ -7,6 +7,7 @@ import Link from "next/link"
 import { ArrowRight, Mail, Lock } from "lucide-react"
 import { Google, GitHub } from "@/components/SvgIcons"
 import Image from "next/image"
+import { Logo } from "@/components/ui/Logo"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -35,9 +36,9 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl shadow-navy/5 overflow-hidden border border-slate-100 p-8 md:p-12 animate-in fade-in zoom-in duration-500 z-10 relative">
           
           <div className="mb-10 text-center">
-            <Link href="/" className="inline-flex items-center gap-1.5 mb-8 group">
-              <span className="text-2xl font-heading font-black tracking-tight text-[#06507c] group-hover:text-teal transition-colors">Sponsrpath</span>
-            </Link>
+            <div className="flex justify-center mb-8">
+              <Logo size="lg" variant="dark" />
+            </div>
             <h2 className="text-3xl font-heading font-semibold text-navy">
               Welcome back
             </h2>

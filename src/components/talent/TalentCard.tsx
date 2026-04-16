@@ -17,6 +17,10 @@ interface TalentCardProps {
     avatarUrl: string | null
     availability: string | null
     preferredType: string | null
+    preferredRole: string | null
+    noticePeriod: string | null
+    expectedSalaryMin: number | null
+    expectedSalaryMax: number | null
     visaSponsorRequired: boolean
     skills: Skill[]
     user: { name: string | null; image: string | null }
@@ -37,7 +41,15 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
     .toUpperCase()
     .slice(0, 2)
 
-  const topSkills = seeker.skills.slice(0, 4)
+  const topSkills = seeker.skills.slice(0, 6)
+
+  const getProficiencyStyle = (p: string) => {
+    switch (p) {
+      case "Expert": return "text-emerald-600 bg-emerald-50 border-emerald-100"
+      case "Intermediate": return "text-amber-600 bg-amber-50 border-amber-100"
+      default: return "text-slate-500 bg-slate-50 border-slate-100"
+    }
+  }
 
   return (
     <div className="group bg-white rounded-[2.5rem] border border-slate-100 shadow-lg shadow-navy/5 hover:shadow-2xl hover:shadow-navy/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col">
@@ -46,7 +58,7 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-5">
             {/* Avatar */}
-            <div className="w-16 h-16 rounded-2xl bg-navy text-white flex items-center justify-center text-lg font-black shadow-xl overflow-hidden shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-slate-500 text-white flex items-center justify-center text-lg font-black shadow-xl overflow-hidden shrink-0">
               {seeker.avatarUrl || seeker.user.image ? (
                 <img
                   src={seeker.avatarUrl ?? seeker.user.image ?? ""}
@@ -58,16 +70,23 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
               )}
             </div>
             <div>
-              <h3 className="text-base font-black text-navy leading-tight">{name}</h3>
-              <p className="text-xs font-bold text-slate-500 mt-1 line-clamp-1">
-                {seeker.headline ?? "Open to opportunities"}
+              <h3 className="text-2xl font-bold text-navy leading-tight">{name}</h3>
+              <p className="text-md font-bold text-slate-400 mt-1">
+                {seeker.preferredRole || seeker.headline || "Open to opportunities"}
               </p>
-              {seeker.city && (
-                <div className="flex items-center gap-1.5 mt-1.5 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                  <MapPin className="h-3 w-3" />
-                  {seeker.city}
-                </div>
-              )}
+              <div className="flex items-center gap-2 mt-1.5 overflow-hidden">
+                {seeker.city && (
+                  <div className="flex items-center gap-1.5 text-md text-slate-400 font-semibold  whitespace-nowrap">
+                    <MapPin className="h-3 w-3" />
+                    {seeker.city}
+                  </div>
+                )}
+                {seeker.expectedSalaryMin && (
+                  <div className="text-md text-emerald-600 font-semibold whitespace-nowrap bg-emerald-50 px-2  rounded-md">
+                    £{seeker.expectedSalaryMin / 1000}k+
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -86,13 +105,19 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
         {/* Meta chips */}
         <div className="flex flex-wrap gap-2">
           {seeker.preferredType && (
-            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 uppercase tracking-widest">
-              <Clock className="h-3 w-3 text-teal" />
-              {seeker.preferredType.replace("_", " ")}
+            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-md font-semibold text-slate-600 shadow-xs">
+              <Clock className="h-4 w-4 text-teal" />
+              {seeker.preferredType}
+            </span>
+          )}
+          {seeker.noticePeriod && (
+            <span className="px-3 py-1.5 bg-navy/5 border border-navy/10 rounded-xl text-md font-semibold text-slate-600  flex items-center gap-1.5 shadow-xs">
+              <Zap className="h-4 w-4 text-amber" />
+              {seeker.noticePeriod}
             </span>
           )}
           {seeker.availability && (
-            <span className="px-3 py-1.5 bg-emerald/10 border border-emerald/20 rounded-xl text-[10px] font-black text-emerald uppercase tracking-widest">
+            <span className="px-3 py-1.5 bg-emerald/10 border border-emerald/20 rounded-xl text-md font-semibold text-slate-600 shadow-xs">
               {seeker.availability}
             </span>
           )}
@@ -104,15 +129,15 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
             {topSkills.map((skill) => (
               <span
                 key={skill.id}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-navy/5 border border-navy/10 rounded-xl text-[10px] font-black text-navy uppercase tracking-widest"
+                title={skill.proficiency}
+                className={`px-3 py-1.5 border rounded-xl text-md font-semibold transition-all cursor-default ${getProficiencyStyle(skill.proficiency)}`}
               >
-                <Zap className="h-3 w-3 text-amber" />
                 {skill.name}
               </span>
             ))}
-            {seeker.skills.length > 4 && (
+            {seeker.skills.length > 6 && (
               <span className="px-3 py-1.5 bg-slate-50 border border-dashed border-slate-200 rounded-xl text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                +{seeker.skills.length - 4}
+                +{seeker.skills.length - 6}
               </span>
             )}
           </div>
@@ -122,14 +147,14 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
         <div className="mt-auto flex gap-3 pt-2">
           <Link
             href={`/talent/${seeker.id}`}
-            className="flex-1 text-center py-3 px-6 rounded-2xl border border-slate-200 text-xs font-black text-slate-500 uppercase tracking-widest hover:bg-slate-50 hover:border-navy/20 hover:text-navy transition-all"
+            className="flex-1 text-center py-3 px-6 rounded-2xl border border-slate-200 text-md font-semibold bg-navy text-white hover:bg-slate-50 hover:border-navy/20 hover:text-navy transition-all"
           >
             View Profile
           </Link>
           {showOutreachButton && (
             <Link
               href={`/dashboard/organization/talent/${seeker.id}/outreach`}
-              className="flex-1 text-center py-3 px-6 rounded-2xl bg-navy text-white text-xs font-black uppercase tracking-widest hover:bg-teal transition-all flex items-center justify-center gap-2 shadow-lg shadow-navy/20"
+              className="flex-1 text-center py-3 px-6 rounded-2xl bg-navy text-white text-md font-semibold hover:bg-teal transition-all flex items-center justify-center gap-2 shadow-lg shadow-navy/20"
             >
               Reach Out <ArrowRight className="h-3.5 w-3.5" />
             </Link>

@@ -5,7 +5,7 @@ import Link from "next/link"
 import {
   MapPin, Mail, Globe, Github, Linkedin, Download,
   Briefcase, GraduationCap, Award, Languages, Zap,
-  CalendarDays, Clock, ShieldCheck, ExternalLink, ArrowLeft
+  CalendarDays, Clock, ShieldCheck, ExternalLink, ArrowLeft, UserCircle
 } from "lucide-react"
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
@@ -269,13 +269,14 @@ export default async function TalentProfilePage({ params }: { params: Promise<{ 
                   { label: "Job Type", value: seeker.preferredType?.replace("_", " ") },
                   { label: "Location Pref.", value: seeker.preferredLocation },
                   { label: "Notice Period", value: seeker.noticePeriod },
+                  { label: "Expected Salary", value: seeker.expectedSalaryMin ? `£${seeker.expectedSalaryMin.toLocaleString()} - £${seeker.expectedSalaryMax?.toLocaleString() || 'Negotiable'}` : null },
                   { label: "Availability", value: seeker.availability },
                   { label: "Open to Relocation", value: seeker.relocatable },
                 ].map(item =>
                   item.value ? (
                     <div key={item.label} className="flex items-center justify-between py-2 border-b border-dashed border-slate-100 last:border-0">
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.label}</span>
-                      <span className="text-xs font-bold text-navy">{item.value}</span>
+                      <span className="text-xs font-bold text-navy truncate ml-4">{item.value}</span>
                     </div>
                   ) : null
                 )}
@@ -295,6 +296,26 @@ export default async function TalentProfilePage({ params }: { params: Promise<{ 
                 </div>
               </Card>
             )}
+
+            {/* Additional Info (Diversity) */}
+            {(seeker.gender || seeker.differentlyAbled || seeker.veteranStatus) && (
+              <Card title="Additional Info" icon={<UserCircle className="h-5 w-5 text-slate-400" />}>
+                <div className="space-y-4">
+                  {[
+                    { label: "Gender", value: seeker.gender },
+                    { label: "Differently Abled", value: seeker.differentlyAbled },
+                    { label: "Veteran Status", value: seeker.veteranStatus },
+                  ].map(item =>
+                    item.value ? (
+                      <div key={item.label} className="flex items-center justify-between py-2 border-b border-dashed border-slate-100 last:border-0">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.label}</span>
+                        <span className="text-xs font-bold text-navy">{item.value}</span>
+                      </div>
+                    ) : null
+                  )}
+                </div>
+              </Card>
+              )}
 
             {/* CV download */}
             {seeker.resumeUrl && (

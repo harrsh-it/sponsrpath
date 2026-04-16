@@ -3,6 +3,7 @@ import { TalentCard } from "@/components/talent/TalentCard"
 import { TalentFilters } from "@/components/talent/TalentFilters"
 import { Suspense } from "react"
 import { Users, Sparkles } from "lucide-react"
+import Navbar from "@/components/Navbar"
 
 const PAGE_SIZE = 12
 
@@ -13,6 +14,7 @@ interface SearchParams {
   availability?: string
   visaOnly?: string
   page?: string
+  notice?: string
 }
 
 export const metadata = {
@@ -33,6 +35,7 @@ export default async function TalentShowcasePage({
   if (searchParams.jobType) where.preferredType = searchParams.jobType
   if (searchParams.location) where.city = { contains: searchParams.location }
   if (searchParams.availability) where.availability = searchParams.availability
+  if (searchParams.notice) where.noticePeriod = searchParams.notice
   if (searchParams.visaOnly === "true") where.visaSponsorRequired = true
 
   const [seekers, total] = await Promise.all([
@@ -52,44 +55,42 @@ export default async function TalentShowcasePage({
   // Skills filter — in-memory
   const filteredSeekers = searchParams.skills
     ? seekers.filter(s =>
-        s.skills.some(sk =>
-          searchParams.skills!.toLowerCase().split(",").some(fs =>
-            sk.name.toLowerCase().includes(fs.trim())
-          )
+      s.skills.some(sk =>
+        searchParams.skills!.toLowerCase().split(",").some(fs =>
+          sk.name.toLowerCase().includes(fs.trim())
         )
       )
+    )
     : seekers
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
   return (
+    <>
+    <Navbar/>
     <div className="min-h-screen bg-slate-50">
       {/* Hero banner */}
       <div className="bg-navy px-6 py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(20,127,138,0.3)_0%,transparent_70%)]" />
         <div className="relative max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-white/10 border border-white/20 rounded-full mb-6">
-            <Sparkles className="h-4 w-4 text-amber" />
-            <span className="text-xs font-black text-white uppercase tracking-widest">Talent Showcase</span>
-          </div>
-          <h1 className="text-5xl font-heading font-black text-white tracking-tight mb-5">
-            Find Your Next <span className="text-amber">Hire</span>
+          <h1 className="text-6xl font-heading font-black text-white tracking-tight mb-5">
+            Find Your Next Hire
           </h1>
           <p className="text-lg text-white/70 font-medium max-w-2xl mx-auto leading-relaxed">
-            Browse verified candidates actively looking for opportunities. 
+            Browse verified candidates actively looking for opportunities.
             Filter by skills, location, availability, and visa sponsorship needs.
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
             <div className="flex items-center gap-2 px-5 py-2.5 bg-white/10 rounded-2xl border border-white/20">
-              <Users className="h-4 w-4 text-teal" />
-              <span className="text-white font-bold text-sm">{total} candidates available</span>
+              <Users className="h-5 w-5 text-white" />
+              <span className="text-white font-semibold text-md">{total} candidates available</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main layout */}
-      <div className="max-w-7xl mx-auto px-6 py-14">
+      <div className="max-w-full mx-auto px-6 py-14">
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Sidebar filters */}
           <aside className="w-full lg:w-80 shrink-0">
@@ -115,15 +116,15 @@ export default async function TalentShowcasePage({
             ) : (
               <>
                 <div className="flex items-center justify-between mb-8">
-                  <p className="text-sm font-bold text-slate-500">
-                    Showing <span className="text-navy">{filteredSeekers.length}</span> of {total} candidates
+                  <p className="text-md font-semibold text-slate-500">
+                    Showing <span className="text-navy font-black">{filteredSeekers.length}</span> of {total} candidates
                   </p>
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                  <div className="text-md font-bold text-slate-400 flex items-center gap-2">
                     Sorted by availability
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2   gap-6">
                   {filteredSeekers.map((seeker) => (
                     <TalentCard key={seeker.id} seeker={seeker as any} />
                   ))}
@@ -135,12 +136,11 @@ export default async function TalentShowcasePage({
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                       <a
                         key={p}
-                        href={`?page=${p}${searchParams.skills ? `&skills=${searchParams.skills}` : ""}${searchParams.jobType ? `&jobType=${searchParams.jobType}` : ""}`}
-                        className={`w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-black transition-all ${
-                          p === page
+                        href={`?page=${p}${searchParams.skills ? `&skills=${searchParams.skills}` : ""}${searchParams.jobType ? `&jobType=${searchParams.jobType}` : ""}${searchParams.notice ? `&notice=${searchParams.notice}` : ""}`}
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-black transition-all ${p === page
                             ? "bg-navy text-white shadow-xl shadow-navy/20"
                             : "bg-white border border-slate-200 text-slate-500 hover:border-navy/30 hover:text-navy"
-                        }`}
+                          }`}
                       >
                         {p}
                       </a>
@@ -153,5 +153,6 @@ export default async function TalentShowcasePage({
         </div>
       </div>
     </div>
+    </>
   )
 }

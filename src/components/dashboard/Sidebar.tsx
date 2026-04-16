@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LayoutDashboard, Briefcase, PlusCircle, Settings, LogOut, Search, User, Bookmark, Award, Users, Bell } from "lucide-react"
 import { signOutUser } from "@/actions/auth"
+import { Logo } from "../ui/Logo"
 
 interface SidebarProps {
   role?: string
@@ -36,9 +37,7 @@ export function Sidebar({ role }: SidebarProps) {
   return (
     <div className="w-64 bg-navy rounded-2xl text-white h-[calc(100vh-1rem)] sticky top-2 flex-col pt-8 pb-4 hidden md:flex shrink-0 mx-2">
       <div className="px-6 mb-10">
-        <Link href="/" className="text-2xl font-bold font-heading tracking-tight flex items-center justify-center gap-2">
-          <span className="text-white">Sponsrpath</span>
-        </Link>
+        <Logo size="md" variant="white" className="justify-center" />
       </div>
 
       <nav className="flex-1 px-4 space-y-1">

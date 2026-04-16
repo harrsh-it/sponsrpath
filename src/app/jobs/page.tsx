@@ -109,21 +109,21 @@ export default async function JobsPage({
       <Navbar />
       <div className="min-h-screen bg-slate-50">
         {/* Header Section */}
-        <div className="bg-navy pt-20 pb-32 px-6">
+        <div className="bg-navy pt-10 pb-16 px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row items-end justify-between gap-8">
-              <div className="max-w-2xl">
+            <div className="flex flex-col md:flex-col items-center justify-center gap-8  ">
+              <div className="max-w-2xl ">
                 
-                <h1 className="text-4xl md:text-6xl font-heading font-black text-white leading-tight">
-                  Find your <span className="text-amber">Visa-Sponsored</span> future.
+                <h1 className="text-4xl md:text-6xl text-center font-black text-white leading-tight">
+                  Find your Visa-Sponsored  future.
                 </h1>
-                <p className="text-white/60 text-lg mt-6 font-medium max-w-xl">
+                <p className="text-white/60 text-lg mt-6 text-center font-medium ">
                   Filter by sponsorship status, job type, and location to find the perfect role that values your global talent.
                 </p>
               </div>
               
-              <form method="GET" action="/jobs" className="w-full max-w-md flex flex-col gap-3">
-                <div className="relative">
+              <form method="GET" action="/jobs" className="w-full max-w-2xl  flex flex-col gap-3 ">
+                <div className="relative ">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <input
                     type="text"
@@ -139,7 +139,7 @@ export default async function JobsPage({
         </div>
 
         {/* Search Layout */}
-        <div className="max-w-7xl mx-auto px-6 -mt-16 pb-20">
+        <div className="max-w-full mx-auto px-6 mt-4 pb-20">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* Sidebar Filter */}
@@ -150,7 +150,7 @@ export default async function JobsPage({
             {/* Results List */}
             <main className="lg:col-span-9 space-y-6">
               <div className="flex items-center justify-between bg-white px-8 py-5 rounded-3xl shadow-sm border border-slate-100 mb-2">
-                <p className="text-slate-500 text-sm font-medium">
+                <p className="text-slate-500 text-md font-medium">
                   Showing <span className="text-navy font-black">{jobs.length}</span> results
                   {q && <span> for <span className="text-teal font-black">"{q}"</span></span>}
                 </p>
@@ -198,38 +198,38 @@ export default async function JobsPage({
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-3 mb-1">
-                              <h2 className="text-xl font-black text-navy group-hover:text-teal transition-colors tracking-tight">
+                              <h2 className="text-2xl font-bold text-navy group-hover:text-teal transition-colors tracking-tight">
                                 {job.title}
                               </h2>
                             </div>
-                            <p className="text-slate-400 font-bold text-sm uppercase tracking-wider">{job.organization.companyName}</p>
+                            <p className="text-slate-400 font-bold text-md ">{job.organization.companyName}</p>
                             
-                            <div className="flex flex-wrap items-center gap-4 mt-6">
-                              <div className="flex items-center gap-1.5 text-xs font-black text-slate-500 uppercase tracking-widest">
-                                <Building2 className="h-4 w-4 text-teal" /> {job.organization.industry || "General"}
+                            <div className="flex flex-wrap items-center gap-4 mt-3">
+                              <div className="flex items-center gap-1.5 text-md font-bold text-slate-500">
+                                <Building2 className="h-6 w-6 text-teal" /> {job.organization.industry || "General"}
                               </div>
-                              <div className="flex items-center gap-1.5 text-xs font-black text-slate-500 uppercase tracking-widest">
-                                <MapPin className="h-4 w-4 text-teal" /> {job.locationName || "United Kingdom"} ({job.locationType?.toLowerCase() || "n/a"})
+                              <div className="flex items-center gap-1.5 text-md font-bold text-slate-500">
+                                <MapPin className="h-6 w-6 text-teal" /> {job.locationName || "United Kingdom"} ({job.locationType?.toLowerCase() || "n/a"})
                               </div>
-                              <div className="flex items-center gap-1.5 text-xs font-black text-slate-500 uppercase tracking-widest">
-                                <Clock className="h-4 w-4 text-teal" /> {job.jobType?.replace("_", " ").toLowerCase() || "n/a"}
+                              <div className="flex items-center gap-1.5 text-md font-bold text-slate-500">
+                                <Clock className="h-6 w-6 text-teal" /> {job.jobType?.replace("_", " ").toLowerCase() || "n/a"}
                               </div>
                               {(job.minExperience !== null && job.minExperience !== undefined) && (
-                                <div className="flex items-center gap-1.5 text-xs font-black text-slate-500 uppercase tracking-widest">
-                                  <Zap className="h-4 w-4 text-amber" /> {job.minExperience}{job.maxExperience ? `-${job.maxExperience}` : "+"} Years Exp
+                                <div className="flex items-center gap-1.5 text-md font-bold text-slate-500">
+                                  <Zap className="h-6 w-6 text-amber" /> {job.minExperience}{job.maxExperience ? `-${job.maxExperience}` : "+"} Years Exp
                                 </div>
                               )}
                             </div>
 
                             {job.requiredSkills && (
-                              <div className="flex flex-wrap gap-2 mt-5">
+                              <div className="flex flex-wrap gap-2 mt-3">
                                 {job.requiredSkills.split(",").slice(0, 4).map((skill: string) => (
-                                  <span key={skill} className="px-3 py-1 bg-slate-50 text-slate-500 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-100">
+                                  <span key={skill} className="px-3 py-1 bg-slate-50 text-slate-500 text-md font-semibold  rounded-lg border border-slate-100">
                                     {skill.trim()}
                                   </span>
                                 ))}
                                 {job.requiredSkills.split(",").length > 4 && (
-                                  <span className="px-3 py-1 bg-slate-50 text-slate-400 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-100 italic">
+                                  <span className="px-3 py-1 bg-slate-50 text-slate-400 text-md font-semibold  rounded-lg border border-slate-100 italic">
                                     +{job.requiredSkills.split(",").length - 4} more
                                   </span>
                                 )}
@@ -240,19 +240,19 @@ export default async function JobsPage({
                         <div className="flex flex-col items-end gap-3 shrink-0">
                           <VisaBadge status={job.visaSponsorBadge as SponsorStatus} />
                           {job.minSalary && (
-                            <span className="text-sm font-black text-navy bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
+                            <span className="text-lg font-semibold text-navy bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-100">
                               £{(job.minSalary / 1000).toFixed(0)}k – £{(job.maxSalary! / 1000).toFixed(0)}k
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between mt-8 pt-8 border-t border-slate-50">
+                      <div className="flex items-center justify-between mt-2 border-t border-slate-50">
                         <div className="flex items-center gap-4">
-                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                             <Globe className="h-3 w-3" /> Tier 2 Sponsored
+                           <span className="text-md font-semibold text-slate-400  flex items-center gap-1.5">
+                             <Globe className="h-5 w-5" /> Tier 2 Sponsored
                            </span>
-                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                           <span className="text-md font-semibold text-slate-400 ">
                              Posted {new Date(job.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
                            </span>
                         </div>
@@ -262,7 +262,7 @@ export default async function JobsPage({
                           )}
                           <Link 
                             href={`/jobs/${job.id}`}
-                            className="bg-navy text-white font-black text-xs uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-teal transition-all shadow-xl shadow-navy/10 active:scale-95"
+                            className="bg-navy text-white font-semibold text-xl px-6 py-2 rounded-2xl hover:bg-teal transition-all shadow-xl shadow-navy/10 active:scale-95"
                           >
                             Details
                           </Link>

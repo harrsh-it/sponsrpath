@@ -12,6 +12,7 @@ export function TalentFilters() {
   const [jobType, setJobType] = useState(params.get("jobType") ?? "")
   const [location, setLocation] = useState(params.get("location") ?? "")
   const [availability, setAvailability] = useState(params.get("availability") ?? "")
+  const [notice, setNotice] = useState(params.get("notice") ?? "")
   const [visaOnly, setVisaOnly] = useState(params.get("visaOnly") === "true")
 
   function applyFilters() {
@@ -20,6 +21,7 @@ export function TalentFilters() {
     if (jobType) q.set("jobType", jobType)
     if (location) q.set("location", location)
     if (availability) q.set("availability", availability)
+    if (notice) q.set("notice", notice)
     if (visaOnly) q.set("visaOnly", "true")
     router.push(`?${q.toString()}`)
   }
@@ -29,11 +31,12 @@ export function TalentFilters() {
     setJobType("")
     setLocation("")
     setAvailability("")
+    setNotice("")
     setVisaOnly(false)
     router.push("?")
   }
 
-  const hasFilters = skills || jobType || location || availability || visaOnly
+  const hasFilters = skills || jobType || location || availability || notice || visaOnly
 
   return (
     <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-navy/5 p-8 space-y-8">
@@ -42,22 +45,22 @@ export function TalentFilters() {
           <div className="w-10 h-10 rounded-xl bg-navy/10 flex items-center justify-center">
             <SlidersHorizontal className="h-5 w-5 text-navy" />
           </div>
-          <h2 className="text-sm font-black text-navy uppercase tracking-widest">Filter Talent</h2>
+          <h2 className="text-2xl font-bold text-navy ">Filter Talent</h2>
         </div>
         {hasFilters && (
           <button
             onClick={clearFilters}
-            className="text-[10px] font-black text-rose-400 uppercase tracking-widest hover:text-rose-600 flex items-center gap-1.5 transition-colors"
+            className="text-sm font-bold text-rose-400 uppercase tracking-widest hover:text-rose-600 flex items-center gap-1.5 transition-colors"
           >
-            <X className="h-3.5 w-3.5" /> Clear
+            <X className="h-5 w-5" /> Clear
           </button>
         )}
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Skills */}
         <div>
-          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
+          <label className="block text-lg font-bold text-navy mb-3">
             Skills
           </label>
           <div className="relative">
@@ -66,32 +69,34 @@ export function TalentFilters() {
               value={skills}
               onChange={(e) => setSkills(e.target.value)}
               placeholder="e.g. React, Python..."
-              className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-sm font-semibold text-navy placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy/20 focus:bg-white transition-all"
+              className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium text-navy placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy/20 focus:bg-white transition-all"
             />
           </div>
         </div>
 
         {/* Job Type */}
         <div>
-          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
+          <label className="block text-lg font-bold text-navy mb-3">
             Preferred Job Type
           </label>
           <select
             value={jobType}
             onChange={(e) => setJobType(e.target.value)}
-            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-sm font-semibold text-navy focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy/20 focus:bg-white transition-all appearance-none cursor-pointer"
+            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium text-navy focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy/20 focus:bg-white transition-all appearance-none cursor-pointer"
           >
             <option value="">Any Type</option>
-            <option value="FULL_TIME">Full-time</option>
-            <option value="PART_TIME">Part-time</option>
-            <option value="CONTRACT">Contract</option>
-            <option value="INTERNSHIP">Internship</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Contract">Contract</option>
+            <option value="Internship">Internship</option>
+            <option value="Graduate Scheme">Graduate Scheme</option>
+            <option value="Freelance">Freelance</option>
           </select>
         </div>
 
         {/* Location */}
         <div>
-          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
+          <label className="block text-lg font-bold text-navy mb-3">
             Location / City
           </label>
           <input
@@ -102,17 +107,36 @@ export function TalentFilters() {
           />
         </div>
 
+        {/* Notice Period */}
+        <div>
+          <label className="block text-lg font-bold text-navy mb-3">
+            Notice Period
+          </label>
+          <select
+            value={notice}
+            onChange={(e) => setNotice(e.target.value)}
+            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium text-navy focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy/20 focus:bg-white transition-all appearance-none cursor-pointer"
+          >
+            <option value="">Any Notice</option>
+            <option value="Immediate">Immediate / None</option>
+            <option value="1 week">1 Week</option>
+            <option value="2 weeks">2 Weeks</option>
+            <option value="1 month">1 Month</option>
+            <option value="3 months">3 Months</option>
+          </select>
+        </div>
+
         {/* Availability */}
         <div>
-          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
+          <label className="block text-lg font-bold text-navy mb-3">
             Availability
           </label>
           <select
             value={availability}
             onChange={(e) => setAvailability(e.target.value)}
-            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-sm font-semibold text-navy focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy/20 focus:bg-white transition-all appearance-none cursor-pointer"
+            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium text-navy focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy/20 focus:bg-white transition-all appearance-none cursor-pointer"
           >
-            <option value="">Any</option>
+            <option value="">Any Availability</option>
             <option value="Immediately">Immediately</option>
             <option value="2 Weeks">2 Weeks Notice</option>
             <option value="1 Month">1 Month Notice</option>
@@ -131,16 +155,16 @@ export function TalentFilters() {
                 className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm transition-all duration-300 ${visaOnly ? "left-7" : "left-1"}`}
               />
             </div>
-            <div>
-              <p className="text-xs font-black text-navy uppercase tracking-widest">Needs Visa Sponsorship</p>
-              <p className="text-[10px] text-slate-400 font-bold">Only show candidates needing sponsorship</p>
+            <div className="mt-8">
+              <p className="text-lg font-bold text-navy">Needs Visa Sponsorship</p>
+              <p className="text-sm text-slate-400 font-semibold">Only show candidates needing sponsorship</p>
             </div>
           </label>
         </div>
 
         <button
           onClick={applyFilters}
-          className="w-full py-4 bg-navy text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-teal transition-all shadow-xl shadow-navy/20 active:scale-95"
+          className="w-full py-4 bg-navy text-white rounded-2xl text-md font-semibold hover:bg-teal transition-all shadow-xl shadow-navy/20 active:scale-95"
         >
           Apply Filters
         </button>

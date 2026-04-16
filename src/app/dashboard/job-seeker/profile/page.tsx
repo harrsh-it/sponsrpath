@@ -5,7 +5,7 @@ import Link from "next/link"
 import { 
   FileText, ArrowLeft, MapPin, Phone, Mail, 
   Briefcase, GraduationCap, Github, Linkedin, 
-  Globe, User, Heart, ChevronRight
+  Globe, User, Heart, ChevronRight, Zap, Award, Languages
 } from "lucide-react"
 import ProfileAvatar from "@/components/dashboard/ProfileAvatar"
 import { VisibilityToggle } from "@/components/talent/VisibilityToggle"
@@ -96,21 +96,68 @@ export default async function JobSeekerProfilePage() {
 
           <div className="bg-white rounded-3xl shadow-xl shadow-navy/5 border border-slate-100 p-8">
             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-50 pb-3">Job Preferences</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Role</span>
-                <span className="font-medium text-slate-800">{jobSeeker.preferredRole || "Any"}</span>
+            <div className="space-y-4 text-sm">
+              <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Role</span>
+                <span className="font-black text-navy text-right shrink-0 ml-4">{jobSeeker.preferredRole || "Any"}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Type</span>
-                <span className="font-medium text-slate-800">{jobSeeker.preferredType || "Any"}</span>
+              <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Type</span>
+                <span className="font-black text-navy text-right shrink-0 ml-4">{jobSeeker.preferredType || "Any"}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Notice</span>
-                <span className="font-medium text-slate-800">{jobSeeker.noticePeriod || "Not specified"}</span>
+              <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Notice</span>
+                <span className="font-black text-navy text-right shrink-0 ml-4">{jobSeeker.noticePeriod || "Immediate"}</span>
               </div>
+              {jobSeeker.expectedSalaryMin && (
+                <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                  <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Expected Salary</span>
+                  <span className="font-black text-emerald-600 text-right shrink-0 ml-4">£{jobSeeker.expectedSalaryMin.toLocaleString()}+</span>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* SKILLS */}
+          <div className="bg-white rounded-3xl shadow-xl shadow-navy/5 border border-slate-100 p-8">
+            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-50 pb-3">Skills & Expertise</h3>
+            <div className="flex flex-wrap gap-2">
+              {jobSeeker.skills.length === 0 ? (
+                <p className="text-xs text-slate-400 italic">No skills added yet.</p>
+              ) : (
+                jobSeeker.skills.map(skill => (
+                  <div key={skill.id} className="flex flex-col gap-1">
+                    <span className="px-3 py-1.5 bg-navy/5 border border-navy/10 rounded-xl text-[10px] font-black text-navy uppercase tracking-widest flex items-center gap-1.5">
+                      <Zap className="h-3 w-3 text-amber" />
+                      {skill.name}
+                    </span>
+                    <span className={`text-[8px] font-black uppercase tracking-tighter text-center rounded-md px-1 py-0.5 ${
+                      skill.proficiency === 'Expert' ? 'text-emerald-600 bg-emerald-50' :
+                      skill.proficiency === 'Intermediate' ? 'text-amber-600 bg-amber-50' :
+                      'text-slate-500 bg-slate-50'
+                    }`}>
+                      {skill.proficiency}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* LANGUAGES */}
+          {jobSeeker.languages.length > 0 && (
+            <div className="bg-white rounded-3xl shadow-xl shadow-navy/5 border border-slate-100 p-8">
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-50 pb-3">Languages</h3>
+              <div className="space-y-4">
+                {jobSeeker.languages.map(lang => (
+                  <div key={lang.id} className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0 pb-0">
+                    <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">{lang.name}</span>
+                    <span className="font-black text-navy text-xs uppercase tracking-widest">{lang.proficiency}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* RIGHT COLUMN: Exp, Edu, Bios */}
@@ -168,6 +215,23 @@ export default async function JobSeekerProfilePage() {
             )}
           </div>
 
+          {/* CERTIFICATIONS */}
+          {jobSeeker.certifications.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+              <h3 className="text-lg font-bold text-[#09567a] mb-6 border-b border-slate-100 pb-3 flex items-center gap-2">
+                <Award className="h-5 w-5 text-[#147f8a]" /> Certifications
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {jobSeeker.certifications.map((cert: any) => (
+                  <div key={cert.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <h4 className="font-bold text-slate-800 text-sm">{cert.name}</h4>
+                    <p className="text-xs text-[#147f8a] mt-0.5">{cert.issuer}</p>
+                    <p className="text-[10px] text-slate-400 mt-1 uppercase font-black tracking-widest">{cert.year}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

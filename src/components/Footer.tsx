@@ -131,7 +131,8 @@
 
 
 import Link from "next/link";
-import { Compass, Twitter, Linkedin, Instagram, Github } from "lucide-react";
+import { Twitter, Linkedin, Instagram, Github } from "lucide-react";
+import { Logo } from "./ui/Logo";
 
 const FOOTER_LINKS = {
   "Find Work": [
@@ -187,17 +188,7 @@ export function Footer() {
 
           {/* Brand — full width on mobile, normal on md+ */}
           <div className="col-span-2 sm:col-span-3 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-3 sm:mb-4">
-              <div className="w-8 h-8 rounded-lg bg-amber flex items-center justify-center">
-                <Compass className="w-4 h-4 text-white" />
-              </div>
-              <span
-                className="text-2xl sm:text-3xl lg:text-4xl font-bold"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Sponsrpath
-              </span>
-            </Link>
+            <Logo size="lg" variant="white" className="mb-4" />
 
             <p className="text-base sm:text-lg lg:text-xl font-semibold text-white/60 leading-relaxed max-w-xs sm:max-w-sm md:max-w-[252px]">
               The job portal built exclusively for Indian international students in the UK.

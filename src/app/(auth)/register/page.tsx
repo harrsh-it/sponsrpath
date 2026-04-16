@@ -5,6 +5,7 @@ import { registerUser, authenticateUser } from "@/actions/auth"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowRight, Building2, UserCircle, Mail, Lock, User as UserIcon } from "lucide-react"
+import { Logo } from "@/components/ui/Logo"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -46,9 +47,9 @@ export default function RegisterPage() {
       <div className="w-full max-w-lg bg-white rounded-3xl  overflow-hidden border border-slate-100 p-8 md:p-12 animate-in fade-in zoom-in duration-500 my-auto">
           
           <div className="mb-10 text-center">
-            <Link href="/" className="inline-flex items-center gap-1.5 mb-8 group">
-              <span className="text-2xl font-heading font-black tracking-tight text-[#06507c] group-hover:text-teal transition-colors">Sponsrpath</span>
-            </Link>
+            <div className="flex justify-center mb-8">
+              <Logo size="lg" variant="dark" />
+            </div>
             <h2 className="text-3xl font-heading font-semibold text-navy">
               Create an account
             </h2>
