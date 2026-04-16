@@ -37,9 +37,24 @@ export default async function EmployerTalentSearchPage({
   const outreachMap = new Map(sentOutreach.map(o => [o.jobSeekerId, o.status]))
 
   const where: any = { isPublic: true }
-  if (searchParams.jobType) where.preferredType = searchParams.jobType
+
+  if (searchParams.skills) {
+    where.skills = {
+      some: {
+        name: { in: searchParams.skills.split(",").map(s => s.trim()) }
+      }
+    }
+  }
+
+  const preferenceFilters: any = {}
+  if (searchParams.jobType) preferenceFilters.preferredType = searchParams.jobType
+  if (searchParams.availability) preferenceFilters.availability = searchParams.availability
+
+  if (Object.keys(preferenceFilters).length > 0) {
+    where.jobPreferences = { some: preferenceFilters }
+  }
+
   if (searchParams.location) where.city = { contains: searchParams.location }
-  if (searchParams.availability) where.availability = searchParams.availability
   if (searchParams.notice) where.noticePeriod = searchParams.notice
   if (searchParams.visaOnly === "true") where.visaSponsorRequired = true
 
@@ -47,22 +62,14 @@ export default async function EmployerTalentSearchPage({
     where,
     include: {
       skills: true,
+      jobPreferences: true,
       user: { select: { name: true, image: true } }
     },
-    orderBy: [{ availability: "asc" }, { firstName: "asc" }],
+    orderBy: [{ firstName: "asc" }],
     take: 50
   })
 
-  // In-memory skills filter
-  const filteredSeekers = searchParams.skills
-    ? seekers.filter(s =>
-        s.skills.some(sk =>
-          searchParams.skills!.toLowerCase().split(",").some(fs =>
-            sk.name.toLowerCase().includes(fs.trim())
-          )
-        )
-      )
-    : seekers
+  const filteredSeekers = seekers
 
   return (
     <div className="w-full">
@@ -118,13 +125,12 @@ export default async function EmployerTalentSearchPage({
                 <div key={seeker.id} className="relative">
                   {outreachMap.has(seeker.id) && (
                     <div className="absolute -top-3 left-6 z-10">
-                      <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg ${
-                        outreachMap.get(seeker.id) === "Accepted"
+                      <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg ${outreachMap.get(seeker.id) === "Accepted"
                           ? "bg-emerald text-white"
                           : outreachMap.get(seeker.id) === "Declined"
-                          ? "bg-rose-500 text-white"
-                          : "bg-amber text-navy"
-                      }`}>
+                            ? "bg-rose-500 text-white"
+                            : "bg-amber text-navy"
+                        }`}>
                         {outreachMap.get(seeker.id)}
                       </span>
                     </div>

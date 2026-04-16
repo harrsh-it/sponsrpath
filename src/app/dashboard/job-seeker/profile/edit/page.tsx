@@ -17,7 +17,8 @@ export default async function EditProfilePage() {
       experience: true,
       education: true,
       certifications: true,
-      languages: true
+      languages: true,
+      jobPreferences: true
     }
   })
 

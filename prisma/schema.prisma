@@ -102,22 +102,23 @@ model JobSeeker {
   githubUrl    String?
   linkedinUrl  String?
 
-  // 8. Job Preferences
-  preferredRole    String?
-  preferredType    String?
-  expectedSalaryMin Int?
-  expectedSalaryMax Int?
-  preferredLocation String?
-  noticePeriod     String?
-  availability     String?
+  // 8. Job Preferences (Legacy fields - now moved to JobPreference model)
+  // preferredRole    String?
+  // preferredType    String?
+  // expectedSalaryMin Int?
+  // expectedSalaryMax Int?
+  // preferredLocation String?
+  // noticePeriod     String?
+  // availability     String?
 
   // 9. Additional Info
-  gender           String?
+  gender           String?   // Male, Female, Prefer not to say
   dob              DateTime?
   differentlyAbled String?
   veteranStatus    String?
 
   // Relations
+  jobPreferences   JobPreference[]
   skills           Skill[]
   experience       Experience[]
   education        Education[]
@@ -127,6 +128,23 @@ model JobSeeker {
   interviews       Interview[]
   savedJobs        SavedJob[]
   outreachReceived TalentOutreach[] @relation("OutreachToSeeker")
+}
+
+model JobPreference {
+  id              String    @id @default(cuid())
+  jobSeekerId     String
+  jobSeeker       JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
+  
+  preferredRole    String?
+  preferredType    String?
+  expectedSalaryMin Int?
+  expectedSalaryMax Int?
+  preferredLocation String?
+  noticePeriod     String?
+  availability     String?
+  
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
 model Skill {

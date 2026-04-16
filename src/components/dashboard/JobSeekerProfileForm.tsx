@@ -3,8 +3,8 @@
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { 
-  ArrowLeft, Upload, Plus, Trash2, Save, BadgeCheck, 
+import {
+  ArrowLeft, Upload, Plus, Trash2, Save, BadgeCheck,
   User
 } from "lucide-react"
 
@@ -15,7 +15,7 @@ interface JobSeekerProfileFormProps {
 export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  
+
   // Initialize state with initialData to prevent "vanishing" of existing data
   const [formData, setFormData] = useState<any>({
     firstName: initialData.firstName || "",
@@ -53,13 +53,23 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
     portfolioUrl: initialData.portfolioUrl || "",
     githubUrl: initialData.githubUrl || "",
     linkedinUrl: initialData.linkedinUrl || "",
-    preferredRole: initialData.preferredRole || "",
-    preferredType: initialData.preferredType || "",
-    expectedSalaryMin: initialData.expectedSalaryMin || "",
-    expectedSalaryMax: initialData.expectedSalaryMax || "",
-    preferredLocation: initialData.preferredLocation || "",
-    noticePeriod: initialData.noticePeriod || "",
-    availability: initialData.availability || "",
+    jobPreferences: initialData.jobPreferences?.map((p: any) => ({
+      preferredRole: p.preferredRole || "",
+      preferredType: p.preferredType || "",
+      expectedSalaryMin: p.expectedSalaryMin || "",
+      expectedSalaryMax: p.expectedSalaryMax || "",
+      preferredLocation: p.preferredLocation ? p.preferredLocation.split(',').map((s: string) => s.trim()).filter(Boolean) : [],
+      noticePeriod: p.noticePeriod || "",
+      availability: p.availability || ""
+    })) || (initialData.preferredRole ? [{
+      preferredRole: initialData.preferredRole || "",
+      preferredType: initialData.preferredType || "",
+      expectedSalaryMin: initialData.expectedSalaryMin || "",
+      expectedSalaryMax: initialData.expectedSalaryMax || "",
+      preferredLocation: initialData.preferredLocation ? initialData.preferredLocation.split(',').map((s: string) => s.trim()).filter(Boolean) : [],
+      noticePeriod: initialData.noticePeriod || "",
+      availability: initialData.availability || ""
+    }] : []),
     languages: initialData.languages?.map((l: any) => ({ name: l.name, proficiency: l.proficiency })) || [],
     gender: initialData.gender || "",
     dob: initialData.dob ? new Date(initialData.dob).toISOString().slice(0, 10) : "",
@@ -86,19 +96,20 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
   }
 
   const updateArrayItem = (field: string, index: number, key: string, value: any) => {
-    const updated = [...formData[field]]
-    updated[index][key] = value
-    setFormData((prev: any) => ({ ...prev, [field]: updated }))
+    setFormData((prev: any) => {
+      const updated = [...prev[field]]
+      updated[index] = { ...updated[index], [key]: value }
+      return { ...prev, [field]: updated }
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
     try {
       const { updateJobSeekerProfile } = await import("@/actions/profile-actions")
       const result = await updateJobSeekerProfile(formData)
-      
+
       if (result.success) {
         router.push("/dashboard/job-seeker/profile")
         router.refresh()
@@ -145,7 +156,7 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
         <section className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="bg-slate-50/50 px-8 py-5 border-b border-slate-100 flex items-center justify-between">
             <h2 className="text-sm font-black text-navy uppercase tracking-widest flex items-center gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">1</span> 
+              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">1</span>
               Basic information
             </h2>
             <span className="text-[10px] font-black text-rose-500 bg-rose-50 px-3 py-1 rounded-lg uppercase tracking-widest border border-rose-100">Required</span>
@@ -210,27 +221,38 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
 
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Professional headline *</label>
-              <input required placeholder="e.g. Full-stack Developer · 4 yrs exp" type="text" value={formData.headline} onChange={e => handleInputChange("headline", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal/50 transition-all" />
+              <input required maxLength={40} placeholder="e.g. Full-stack Developer" type="text" value={formData.headline} onChange={e => handleInputChange("headline", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal/50 transition-all" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Phone number *</label>
-                <input required type="tel" value={formData.phone} onChange={e => handleInputChange("phone", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal/50 transition-all" />
+                <input required type="tel" pattern="\d*" inputMode="numeric" maxLength={15} placeholder="e.g. 9876543210" value={formData.phone} onChange={e => handleInputChange("phone", e.target.value.replace(/\D/g, ''))} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal/50 transition-all" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">City / Location *</label>
-                <input required placeholder="e.g. Ludhiana, Punjab" type="text" value={formData.city} onChange={e => handleInputChange("city", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal/50 transition-all" />
+                <input required maxLength={30} placeholder="e.g. Ludhiana, Punjab" type="text" value={formData.city} onChange={e => handleInputChange("city", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal/50 transition-all" />
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Open to relocation?</label>
-              <select value={formData.relocatable} onChange={e => handleInputChange("relocatable", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal/50 transition-all">
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="Remote only">Remote only</option>
-              </select>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Open to relocation?</label>
+                <select value={formData.relocatable} onChange={e => handleInputChange("relocatable", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal/50 transition-all">
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                  <option value="Remote only">Remote only</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Gender</label>
+                <select value={formData.gender} onChange={e => handleInputChange("gender", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal/50 transition-all">
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+              </div>
             </div>
           </div>
         </section>
@@ -239,17 +261,17 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
         <section className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="bg-slate-50/50 px-8 py-5 border-b border-slate-100 flex items-center justify-between">
             <h2 className="text-sm font-black text-navy uppercase tracking-widest flex items-center gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">2</span> 
+              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">2</span>
               Professional summary
             </h2>
             <span className="text-[10px] font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-lg uppercase tracking-widest border border-amber-100">Recommended</span>
           </div>
           <div className="p-8">
-            <textarea 
-              rows={6} 
-              placeholder="Write a short summary about your expertise, career goals and what makes you stand out…" 
-              value={formData.bio} 
-              onChange={e => handleInputChange("bio", e.target.value)} 
+            <textarea
+              rows={6}
+              placeholder="Write a short summary about your expertise, career goals and what makes you stand out…"
+              value={formData.bio}
+              onChange={e => handleInputChange("bio", e.target.value)}
               className="w-full px-4 py-4 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal/50 resize-y transition-all leading-relaxed"
             />
           </div>
@@ -259,7 +281,7 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
         <section className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="bg-slate-50/50 px-8 py-5 border-b border-slate-100">
             <h2 className="text-sm font-black text-navy uppercase tracking-widest flex items-center gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">3</span> 
+              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">3</span>
               Work experience
             </h2>
           </div>
@@ -315,7 +337,7 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
                 <textarea rows={3} value={exp.responsibilities} onChange={e => updateArrayItem("experience", i, "responsibilities", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white leading-relaxed" placeholder="Describe your role and impact..." />
               </div>
             ))}
-            
+
             <button type="button" onClick={() => addArrayItem("experience", { title: "", company: "", startDate: "", endDate: "", isCurrent: false, empType: "Full-time", location: "On-site", responsibilities: "" })} className="flex items-center gap-2 text-teal font-black text-[10px] uppercase tracking-widest hover:text-navy transition-colors">
               <Plus className="h-4 w-4" /> Add work experience
             </button>
@@ -326,7 +348,7 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
         <section className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="bg-slate-50/50 px-8 py-5 border-b border-slate-100">
             <h2 className="text-sm font-black text-navy uppercase tracking-widest flex items-center gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">4</span> 
+              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">4</span>
               Education
             </h2>
           </div>
@@ -348,7 +370,7 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Grade / CGPA</label>
-                    <input placeholder="e.g. First Class / 3.8" type="text" value={edu.grade} onChange={e => updateArrayItem("education", i, "grade", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white" />
+                    <input placeholder="e.g. 3.8" type="text" value={edu.grade} onChange={e => updateArrayItem("education", i, "grade", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white" />
                   </div>
                 </div>
                 <button type="button" onClick={() => removeArrayItem("education", i)} className="p-2 text-slate-400 hover:text-rose-500 mt-6"><Trash2 className="h-5 w-5" /></button>
@@ -364,48 +386,120 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
         <section className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="bg-slate-50/50 px-8 py-5 border-b border-slate-100 flex items-center justify-between">
             <h2 className="text-sm font-black text-navy uppercase tracking-widest flex items-center gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">5</span> 
+              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">5</span>
               Job preferences
             </h2>
           </div>
-          <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Preferred job role</label>
-              <input placeholder="e.g. Software Engineer" type="text" value={formData.preferredRole} onChange={e => handleInputChange("preferredRole", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Preferred job type</label>
-              <select value={formData.preferredType} onChange={e => handleInputChange("preferredType", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white">
-                <option value="">Any type</option>
-                <option value="Full-time">Full-time / Permanent</option>
-                <option value="Contract">Fixed-term Contract</option>
-                <option value="Part-time">Part-time</option>
-                <option value="Internship">Internship</option>
-                <option value="Graduate Scheme">Graduate Scheme</option>
-                <option value="Freelance">Freelance / Projec-based</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Expected salary min (£ / year)</label>
-              <input type="number" placeholder="e.g. 35000" value={formData.expectedSalaryMin} onChange={e => handleInputChange("expectedSalaryMin", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Notice period</label>
-              <select value={formData.noticePeriod} onChange={e => handleInputChange("noticePeriod", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white">
-                <option value="">Select option...</option>
-                <option value="Immediate">Immediate / Not employed</option>
-                <option value="1 week">1 week</option>
-                <option value="2 weeks">2 weeks</option>
-                <option value="1 month">1 month</option>
-                <option value="2 months">2 months</option>
-                <option value="3 months">3 months</option>
-                <option value="6 months+">6 months or more</option>
-              </select>
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 mb-1">Preferred Location</label>
-              <input placeholder="e.g. London, Manchester, Leeds (or 'Remote')" type="text" value={formData.preferredLocation} onChange={e => handleInputChange("preferredLocation", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white" />
-            </div>
+          <div className="p-8 space-y-8">
+            {formData.jobPreferences.map((pref: any, i: number) => (
+              <div key={i} className="p-6 border border-slate-200 rounded-xl relative bg-slate-50/30">
+                <button type="button" onClick={() => removeArrayItem("jobPreferences", i)} className="absolute top-4 right-4 text-slate-400 hover:text-rose-500">
+                  <Trash2 className="h-5 w-5" />
+                </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pr-10">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Preferred job role *</label>
+                    <input required placeholder="e.g. Software Engineer" type="text" value={pref.preferredRole} onChange={e => updateArrayItem("jobPreferences", i, "preferredRole", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Preferred job type</label>
+                    <select value={pref.preferredType} onChange={e => updateArrayItem("jobPreferences", i, "preferredType", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white">
+                      <option value="">Any type</option>
+                      <option value="Full-time">Full-time / Permanent</option>
+                      <option value="Contract">Fixed-term Contract</option>
+                      <option value="Part-time">Part-time</option>
+                      <option value="Internship">Internship</option>
+                      <option value="Graduate Scheme">Graduate Scheme</option>
+                      <option value="Freelance">Freelance / Project-based</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Expected salary min (£ / year)</label>
+                    <input type="number" placeholder="e.g. 35000" value={pref.expectedSalaryMin} onChange={e => updateArrayItem("jobPreferences", i, "expectedSalaryMin", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Notice period</label>
+                    <select value={pref.noticePeriod} onChange={e => updateArrayItem("jobPreferences", i, "noticePeriod", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white">
+                      <option value="">Select option...</option>
+                      <option value="Immediate">Immediate / Not employed</option>
+                      <option value="1 week">1 week</option>
+                      <option value="2 weeks">2 weeks</option>
+                      <option value="1 month">1 month</option>
+                      <option value="2 months">2 months</option>
+                      <option value="3 months">3 months</option>
+                      <option value="6 months+">6 months or more</option>
+                    </select>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Preferred Locations (Max 5)</label>
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {pref.preferredLocation.length === 0 ? (
+                          <span className="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-bold uppercase tracking-wider"></span>
+                        ) : (
+                          pref.preferredLocation.map((loc: string, locIdx: number) => (
+                            <span key={locIdx} className="flex items-center gap-2 px-3 py-1 bg-teal/10 text-teal rounded-lg text-xs font-bold border border-teal/20">
+                              {loc}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newLocs = pref.preferredLocation.filter((_: any, li: number) => li !== locIdx)
+                                  updateArrayItem("jobPreferences", i, "preferredLocation", newLocs)
+                                }}
+                                className="hover:text-rose-500 transition-colors"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </button>
+                            </span>
+                          ))
+                        )}
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <input
+                          id={`newLoc-${i}`}
+                          disabled={pref.preferredLocation.length >= 5}
+                          placeholder={pref.preferredLocation.length >= 5 ? "Max 5 locations reached" : "Add location (e.g. London, Remote)"}
+                          type="text"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              const input = e.currentTarget
+                              const val = input.value.trim()
+                              if (val && pref.preferredLocation.length < 5) {
+                                updateArrayItem("jobPreferences", i, "preferredLocation", [...pref.preferredLocation, val])
+                                input.value = ""
+                              }
+                            }
+                          }}
+                          className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal/50 disabled:bg-slate-50 disabled:cursor-not-allowed"
+                        />
+                        <button
+                          type="button"
+                          disabled={pref.preferredLocation.length >= 5}
+                          onClick={() => {
+                            const input = document.getElementById(`newLoc-${i}`) as HTMLInputElement
+                            const val = input.value.trim()
+                            if (val && pref.preferredLocation.length < 5) {
+                              updateArrayItem("jobPreferences", i, "preferredLocation", [...pref.preferredLocation, val])
+                              input.value = ""
+                            }
+                          }}
+                          className="px-4 py-2 bg-navy text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-teal transition-all disabled:opacity-50"
+                        >
+                          Add
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-slate-400 italic">Press Enter or click Add to save a location. Leave empty for "Worldwide".</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <button type="button" onClick={() => addArrayItem("jobPreferences", { preferredRole: "", preferredType: "", expectedSalaryMin: "", expectedSalaryMax: "", preferredLocation: [], noticePeriod: "", availability: "" })} className="flex items-center gap-2 text-teal font-black text-[10px] uppercase tracking-widest hover:text-navy transition-colors">
+              <Plus className="h-4 w-4" /> Add job preference set
+            </button>
           </div>
         </section>
 
@@ -413,7 +507,7 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
         <section className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="bg-slate-50/50 px-8 py-5 border-b border-slate-100 flex items-center justify-between">
             <h2 className="text-sm font-black text-navy uppercase tracking-widest flex items-center gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">6</span> 
+              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">6</span>
               Skills & Expertise
             </h2>
           </div>
@@ -422,11 +516,10 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
               {formData.skills.map((skill: any, i: number) => (
                 <div key={i} className="flex items-center gap-2 px-4 py-2 bg-navy/5 border border-navy/10 rounded-xl group transition-all hover:bg-navy/10">
                   <span className="text-xs font-bold text-navy">{skill.name}</span>
-                  <span className={`text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md ${
-                    skill.proficiency === 'Expert' ? 'bg-emerald-100 text-emerald-700' :
-                    skill.proficiency === 'Intermediate' ? 'bg-amber-100 text-amber-700' :
-                    'bg-slate-200 text-slate-600'
-                  }`}>
+                  <span className={`text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md ${skill.proficiency === 'Expert' ? 'bg-emerald-100 text-emerald-700' :
+                      skill.proficiency === 'Intermediate' ? 'bg-amber-100 text-amber-700' :
+                        'bg-slate-200 text-slate-600'
+                    }`}>
                     {skill.proficiency}
                   </span>
                   <button type="button" onClick={() => removeArrayItem("skills", i)} className="text-slate-400 hover:text-rose-500 transition-colors">
@@ -448,8 +541,8 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
                   <option value="Expert">Expert</option>
                 </select>
               </div>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => {
                   const nameEl = document.getElementById('newSkillName') as HTMLInputElement
                   const profEl = document.getElementById('newSkillProficiency') as HTMLSelectElement
@@ -470,7 +563,7 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
         <section className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="bg-slate-50/50 px-8 py-5 border-b border-slate-100">
             <h2 className="text-sm font-black text-navy uppercase tracking-widest flex items-center gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">7</span> 
+              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">7</span>
               Certifications
             </h2>
           </div>
@@ -502,17 +595,17 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
         <section className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="bg-slate-50/50 px-8 py-5 border-b border-slate-100">
             <h2 className="text-sm font-black text-navy uppercase tracking-widest flex items-center gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">8</span> 
+              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">8</span>
               Languages
             </h2>
           </div>
           <div className="p-8 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {formData.languages.map((lang: any, i: number) => (
                 <div key={i} className="flex gap-2 items-end">
                   <div className="flex-1">
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Language</label>
-                    <input type="text" value={lang.name} onChange={e => updateArrayItem("languages", i, "name", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white" />
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Language *</label>
+                    <input required type="text" value={lang.name} onChange={e => updateArrayItem("languages", i, "name", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Proficiency</label>
@@ -538,7 +631,7 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
         <section className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="bg-slate-50/50 px-8 py-5 border-b border-slate-100 flex items-center justify-between">
             <h2 className="text-sm font-black text-navy uppercase tracking-widest flex items-center gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">9</span> 
+              <span className="flex items-center justify-center w-6 h-6 rounded-xl bg-teal/10 text-teal text-[10px]">9</span>
               Online presence
             </h2>
           </div>
@@ -549,7 +642,7 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
                 <input placeholder="https://yourportfolio.com" type="url" value={formData.portfolioUrl} onChange={e => handleInputChange("portfolioUrl", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">GitHub / Behance</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">GitHub</label>
                 <input placeholder="github.com/username" type="text" value={formData.githubUrl} onChange={e => handleInputChange("githubUrl", e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white" />
               </div>
               <div>
@@ -565,8 +658,8 @@ export default function JobSeekerProfileForm({ initialData }: JobSeekerProfileFo
           <Link href="/dashboard/job-seeker/profile" className="px-6 py-3 font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
             Cancel
           </Link>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isSubmitting}
             className="flex items-center gap-2 bg-linear-to-r from-navy to-teal text-white font-black text-xs uppercase tracking-widest px-10 py-5 rounded-2xl hover:shadow-xl hover:shadow-teal/20 transition-all active:scale-95 disabled:opacity-70 shadow-lg shadow-navy/5"
           >

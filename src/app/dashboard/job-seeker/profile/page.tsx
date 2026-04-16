@@ -21,7 +21,8 @@ export default async function JobSeekerProfilePage() {
       education: { orderBy: { yearOfPassing: 'desc' } },
       skills: true,
       languages: true,
-      certifications: { orderBy: { year: 'desc' } }
+      certifications: { orderBy: { year: 'desc' } },
+      jobPreferences: true
     }
   })
 
@@ -38,7 +39,7 @@ export default async function JobSeekerProfilePage() {
             <ArrowLeft className="h-3 w-3 group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
           </Link>
           <h1 className="text-4xl font-heading font-black text-navy tracking-tight">My Profile</h1>
-          <p className="text-slate-500 font-bold mt-1">Your showcase to UK employers.</p>
+          <p className="text-slate-500 font-bold mt-1">Your showcase to employers.</p>
         </div>
         <Link
           href="/dashboard/job-seeker/profile/edit"
@@ -94,29 +95,52 @@ export default async function JobSeekerProfilePage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-xl shadow-navy/5 border border-slate-100 p-8">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-50 pb-3">Job Preferences</h3>
-            <div className="space-y-4 text-sm">
-              <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Role</span>
-                <span className="font-black text-navy text-right shrink-0 ml-4">{jobSeeker.preferredRole || "Any"}</span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Type</span>
-                <span className="font-black text-navy text-right shrink-0 ml-4">{jobSeeker.preferredType || "Any"}</span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Notice</span>
-                <span className="font-black text-navy text-right shrink-0 ml-4">{jobSeeker.noticePeriod || "Immediate"}</span>
-              </div>
-              {jobSeeker.expectedSalaryMin && (
-                <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                  <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Expected Salary</span>
-                  <span className="font-black text-emerald-600 text-right shrink-0 ml-4">£{jobSeeker.expectedSalaryMin.toLocaleString()}+</span>
+          {jobSeeker.jobPreferences.length > 0 ? (
+            <div className="space-y-6">
+              {jobSeeker.jobPreferences.map((pref, idx) => (
+                <div key={pref.id} className="bg-white rounded-3xl shadow-xl shadow-navy/5 border border-slate-100 p-8">
+                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-50 pb-3">Preference Set {jobSeeker.jobPreferences.length > 1 ? `#${idx + 1}` : ''}</h3>
+                  <div className="space-y-4 text-sm overflow-x-auto">
+                    <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                      <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Role</span>
+                      <span className="font-black text-navy text-right shrink-0 ml-4 ">{pref.preferredRole || "Any"}</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                      <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Type</span>
+                      <span className="font-black text-navy text-right shrink-0 ml-4">{pref.preferredType || "Any"}</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                      <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Notice</span>
+                      <span className="font-black text-navy text-right shrink-0 ml-4">{pref.noticePeriod || "Immediate"}</span>
+                    </div>
+                    {pref.expectedSalaryMin && (
+                      <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                        <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Expected Salary</span>
+                        <span className="font-black text-emerald-600 text-right shrink-0 ml-4">£{pref.expectedSalaryMin.toLocaleString()}+</span>
+                      </div>
+                    )}
+                    {pref.preferredLocation && (
+                      <div className="flex flex-col gap-2 py-3 border-b border-slate-50">
+                        <span className="text-slate-500 font-bold text-[10px] uppercase tracking-wider">Preferred Locations</span>
+                        <div className="flex flex-wrap justify-end gap-1.5">
+                          {pref.preferredLocation.split(',').map((loc: string, lIdx: number) => (
+                            <span key={lIdx} className="px-2 py-0.5 bg-teal/5 text-teal border border-teal/10 rounded-md text-[10px] font-black uppercase tracking-tight">
+                              {loc.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
+              ))}
             </div>
-          </div>
+          ) : (
+            <div className="bg-white rounded-3xl shadow-xl shadow-navy/5 border border-slate-100 p-8">
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Job Preferences</h3>
+              <p className="text-xs text-slate-400 italic">No preferences set yet.</p>
+            </div>
+          )}
 
           {/* SKILLS */}
           <div className="bg-white rounded-3xl shadow-xl shadow-navy/5 border border-slate-100 p-8">

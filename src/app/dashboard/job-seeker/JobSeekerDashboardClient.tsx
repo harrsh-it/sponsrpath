@@ -18,6 +18,8 @@ interface JobSeekerDashboardClientProps {
     image: string | null
   }
   jobSeeker: {
+    firstName: string | null
+    lastName: string | null
     bio: string | null
     resumeUrl: string | null
     profileStrength: number
@@ -40,7 +42,7 @@ export default function JobSeekerDashboardClient({
   applications,
   interviews,
 }: JobSeekerDashboardClientProps) {
-  const firstName = user.name?.split(" ")[0] || "there"
+  const firstName = jobSeeker.firstName || user.name?.split(" ")[0] || "there"
 
   return (
     <div className="max-w-[1400px] mx-auto pb-10">
@@ -64,7 +66,7 @@ export default function JobSeekerDashboardClient({
           </button>
           <Link
             href="/dashboard/job-seeker/profile/edit"
-            className="hidden sm:flex items-center gap-3 bg-white border-2 border-navy text-navy px-6 py-3 rounded-2xl font-semibold text-xs uppercase tracking-widest hover:bg-navy hover:text-white transition-all shadow-xl shadow-navy/10 group h-fit"
+            className="hidden sm:flex items-center gap-3 bg-amber border-2 border-amber text-navy px-6 py-3 rounded-2xl font-semibold text-md hover:bg-amber/90 transition-colors shadow-xl shadow-navy/10 group h-fit"
           >
             <Zap className="h-4 w-4 fill-navy group-hover:animate-pulse" /> Complete Profile
           </Link>

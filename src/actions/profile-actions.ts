@@ -37,13 +37,6 @@ export async function updateJobSeekerProfile(data: any) {
           portfolioUrl: data.portfolioUrl || jobSeeker.portfolioUrl,
           githubUrl: data.githubUrl || jobSeeker.githubUrl,
           linkedinUrl: data.linkedinUrl || jobSeeker.linkedinUrl,
-          preferredRole: data.preferredRole || jobSeeker.preferredRole,
-          preferredType: data.preferredType || jobSeeker.preferredType,
-          expectedSalaryMin: data.expectedSalaryMin ? parseInt(data.expectedSalaryMin) : jobSeeker.expectedSalaryMin,
-          expectedSalaryMax: data.expectedSalaryMax ? parseInt(data.expectedSalaryMax) : jobSeeker.expectedSalaryMax,
-          preferredLocation: data.preferredLocation || jobSeeker.preferredLocation,
-          noticePeriod: data.noticePeriod || jobSeeker.noticePeriod,
-          availability: data.availability || jobSeeker.availability,
           gender: data.gender || jobSeeker.gender,
           dob: data.dob ? new Date(data.dob) : jobSeeker.dob,
           differentlyAbled: data.differentlyAbled || jobSeeker.differentlyAbled,
@@ -58,6 +51,7 @@ export async function updateJobSeekerProfile(data: any) {
       prisma.education.deleteMany({ where: { jobSeekerId: jobSeeker.id } }),
       prisma.certification.deleteMany({ where: { jobSeekerId: jobSeeker.id } }),
       prisma.language.deleteMany({ where: { jobSeekerId: jobSeeker.id } }),
+      prisma.jobPreference.deleteMany({ where: { jobSeekerId: jobSeeker.id } }),
 
       // 3. Insert new relations
       ...(data.skills?.length ? [prisma.skill.createMany({ 
@@ -102,6 +96,21 @@ export async function updateJobSeekerProfile(data: any) {
         data: data.languages.map((l: any) => ({ 
           name: l.name,
           proficiency: l.proficiency,
+          jobSeekerId: jobSeeker.id 
+        })) 
+      })] : []),
+
+      ...(data.jobPreferences?.length ? [prisma.jobPreference.createMany({ 
+        data: data.jobPreferences.map((p: any) => ({ 
+          preferredRole: p.preferredRole,
+          preferredType: p.preferredType,
+          expectedSalaryMin: p.expectedSalaryMin ? parseInt(p.expectedSalaryMin) : null,
+          expectedSalaryMax: p.expectedSalaryMax ? parseInt(p.expectedSalaryMax) : null,
+          preferredLocation: (p.preferredLocation && p.preferredLocation.length > 0) 
+            ? p.preferredLocation.join(', ') 
+            : "Worldwide",
+          noticePeriod: p.noticePeriod,
+          availability: p.availability,
           jobSeekerId: jobSeeker.id 
         })) 
       })] : []),

@@ -52,15 +52,17 @@ export async function completeJobSeekerOnboarding(formData: FormData) {
 
   const bio = formData.get("bio") as string
   const resumeUrl = formData.get("resumeUrl") as string
+  const gender = formData.get("gender") as string
 
   try {
     const result = await prisma.jobSeeker.upsert({
       where: { userId: session.user.id },
-      update: { bio, resumeUrl },
+      update: { bio, resumeUrl, gender },
       create: {
         userId: session.user.id,
         bio,
-        resumeUrl
+        resumeUrl,
+        gender
       }
     })
     revalidatePath("/dashboard/job-seeker")

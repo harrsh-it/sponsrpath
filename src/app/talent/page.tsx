@@ -32,10 +32,18 @@ export default async function TalentShowcasePage({
 
   // Build Prisma where clause
   const where: any = { isPublic: true }
-  if (searchParams.jobType) where.preferredType = searchParams.jobType
+  
+  // Handle Job Preferences (relation filtering)
+  const preferenceFilters: any = {}
+  if (searchParams.jobType) preferenceFilters.preferredType = searchParams.jobType
+  if (searchParams.availability) preferenceFilters.availability = searchParams.availability
+  if (searchParams.notice) preferenceFilters.noticePeriod = searchParams.notice
+
+  if (Object.keys(preferenceFilters).length > 0) {
+    where.jobPreferences = { some: preferenceFilters }
+  }
+
   if (searchParams.location) where.city = { contains: searchParams.location }
-  if (searchParams.availability) where.availability = searchParams.availability
-  if (searchParams.notice) where.noticePeriod = searchParams.notice
   if (searchParams.visaOnly === "true") where.visaSponsorRequired = true
 
   const [seekers, total] = await Promise.all([
@@ -43,9 +51,10 @@ export default async function TalentShowcasePage({
       where,
       include: {
         skills: true,
+        jobPreferences: true,
         user: { select: { name: true, image: true } }
       },
-      orderBy: [{ availability: "asc" }, { firstName: "asc" }],
+      orderBy: [{ firstName: "asc" }],
       skip,
       take: PAGE_SIZE
     }),

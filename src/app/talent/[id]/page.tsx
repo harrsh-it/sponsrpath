@@ -34,7 +34,8 @@ export default async function TalentProfilePage({ params }: { params: Promise<{ 
       experience: { orderBy: { startDate: "desc" } },
       education: { orderBy: { yearOfPassing: "desc" } },
       certifications: true,
-      languages: true
+      languages: true,
+      jobPreferences: true
     }
   })
 
@@ -46,8 +47,8 @@ export default async function TalentProfilePage({ params }: { params: Promise<{ 
       : seeker.user.name ?? "Anonymous"
 
   const initials = name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
-
   const isOrg = (session?.user as any)?.role === "ORGANIZATION"
+  const primaryPreference = seeker.jobPreferences?.[0] || {}
 
   const proficiencyColor = (p: string) => {
     switch (p) {
@@ -95,11 +96,11 @@ export default async function TalentProfilePage({ params }: { params: Promise<{ 
                 {seeker.city && (
                   <span className="flex items-center gap-2"><MapPin className="h-4 w-4" />{seeker.city}</span>
                 )}
-                {seeker.availability && (
-                  <span className="flex items-center gap-2"><Clock className="h-4 w-4" />Available: {seeker.availability}</span>
+                {primaryPreference.availability && (
+                  <span className="flex items-center gap-2"><Clock className="h-4 w-4" />Available: {primaryPreference.availability}</span>
                 )}
-                {seeker.preferredType && (
-                  <span className="flex items-center gap-2"><Briefcase className="h-4 w-4" />{seeker.preferredType.replace("_", " ")}</span>
+                {primaryPreference.preferredType && (
+                  <span className="flex items-center gap-2"><Briefcase className="h-4 w-4" />{primaryPreference.preferredType.replace("_", " ")}</span>
                 )}
               </div>
 
@@ -262,23 +263,49 @@ export default async function TalentProfilePage({ params }: { params: Promise<{ 
             )}
 
             {/* Job Preferences */}
-            <Card title="Preferences" icon={<Briefcase className="h-5 w-5 text-teal" />}>
-              <div className="space-y-4">
-                {[
-                  { label: "Preferred Role", value: seeker.preferredRole },
-                  { label: "Job Type", value: seeker.preferredType?.replace("_", " ") },
-                  { label: "Location Pref.", value: seeker.preferredLocation },
-                  { label: "Notice Period", value: seeker.noticePeriod },
-                  { label: "Expected Salary", value: seeker.expectedSalaryMin ? `£${seeker.expectedSalaryMin.toLocaleString()} - £${seeker.expectedSalaryMax?.toLocaleString() || 'Negotiable'}` : null },
-                  { label: "Availability", value: seeker.availability },
-                  { label: "Open to Relocation", value: seeker.relocatable },
-                ].map(item =>
-                  item.value ? (
-                    <div key={item.label} className="flex items-center justify-between py-2 border-b border-dashed border-slate-100 last:border-0">
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.label}</span>
-                      <span className="text-xs font-bold text-navy truncate ml-4">{item.value}</span>
+            <Card title="Job Preferences" icon={<Briefcase className="h-5 w-5 text-teal" />}>
+              <div className="space-y-8">
+                {seeker.jobPreferences.length > 0 ? (
+                  seeker.jobPreferences.map((pref, idx) => (
+                    <div key={pref.id} className={idx > 0 ? "pt-6 border-t border-dashed border-slate-100" : ""}>
+                      {seeker.jobPreferences.length > 1 && (
+                        <p className="text-[10px] font-black text-teal uppercase tracking-widest mb-3">Preference Set {idx + 1}</p>
+                      )}
+                      <div className="space-y-3">
+                        {[
+                          { label: "Preferred Role", value: pref.preferredRole },
+                          { label: "Job Type", value: pref.preferredType?.replace("_", " ") },
+                          { label: "Notice Period", value: pref.noticePeriod },
+                          { label: "Expected Salary", value: pref.expectedSalaryMin ? `£${pref.expectedSalaryMin.toLocaleString()} - £${pref.expectedSalaryMax?.toLocaleString() || 'Negotiable'}` : null },
+                          { label: "Availability", value: pref.availability },
+                          { label: "Open to Relocation", value: seeker.relocatable },
+                        ].map(item =>
+                          item.value ? (
+                            <div key={item.label} className="flex items-center justify-between py-1.5">
+                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.label}</span>
+                              <span className="text-xs font-bold text-navy truncate ml-4">{item.value}</span>
+                            </div>
+                          ) : null
+                        )}
+                        {pref.preferredLocation && (
+                          <div className="pt-2">
+                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Preferred Locations</span>
+                             <div className="flex flex-wrap gap-1.5">
+                               {pref.preferredLocation.split(',').map((loc: string, lIdx: number) => (
+                                 <span key={lIdx} className="px-2 py-0.5 bg-teal/5 text-teal border border-teal/10 rounded-md text-[9px] font-black uppercase tracking-tight">
+                                   {loc.trim()}
+                                 </span>
+                               ))}
+                             </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  ) : null
+                  ))
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-xs text-slate-400 italic">No preferences set yet.</p>
+                  </div>
                 )}
               </div>
             </Card>

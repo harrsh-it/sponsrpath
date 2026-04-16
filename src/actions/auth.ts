@@ -89,21 +89,9 @@ export async function authenticateUser(formData: FormData) {
       where: { email }
     })
 
-    // 2. If user doesn't exist, create a new account (Auto-Signup)
+    // 2. If user doesn't exist, return error
     if (!existingUser) {
-      console.log(`Creating new account for: ${email}`)
-      const hashedPassword = await bcryptjs.hash(password, 10)
-      // Default name to the email prefix (e.g. "john" from "john@example.com")
-      const defaultName = email.split('@')[0]
-      
-      await prisma.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          name: defaultName,
-          role: "USER" // Default role, will be updated during onboarding
-        }
-      })
+      return { error: "User not exist. Try to sign up" }
     }
 
     // 3. Proceed to sign in (for either existing or newly created user)

@@ -97,6 +97,8 @@ export default async function JobSeekerDashboard() {
         image: session.user.image ?? null 
       }} 
       jobSeeker={{
+        firstName: jobSeeker.firstName,
+        lastName: jobSeeker.lastName,
         bio: jobSeeker.bio,
         resumeUrl: jobSeeker.resumeUrl,
         profileStrength,

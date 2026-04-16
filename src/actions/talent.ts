@@ -34,20 +34,23 @@ export async function searchTalentAction(filters: {
 }) {
   const { skills, jobType, location, availability, visaSponsorRequired } = filters
 
+  const preferenceFilters: any = {}
+  if (jobType) preferenceFilters.preferredType = jobType
+  if (availability) preferenceFilters.availability = availability
+
   const seekers = await prisma.jobSeeker.findMany({
     where: {
       isPublic: true,
-      ...(jobType ? { preferredType: jobType } : {}),
+      ...(Object.keys(preferenceFilters).length > 0 ? { jobPreferences: { some: preferenceFilters } } : {}),
       ...(location ? { city: { contains: location } } : {}),
-      ...(availability ? { availability } : {}),
       ...(visaSponsorRequired === true ? { visaSponsorRequired: true } : {}),
     },
     include: {
       skills: true,
+      jobPreferences: true,
       user: { select: { name: true, email: true, image: true } }
     },
     orderBy: [
-      { availability: "asc" },
       { firstName: "asc" }
     ]
   })

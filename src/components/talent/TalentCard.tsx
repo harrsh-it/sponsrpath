@@ -1,3 +1,4 @@
+
 import Link from "next/link"
 import { MapPin, Clock, ShieldCheck, Zap, ArrowRight } from "lucide-react"
 
@@ -16,13 +17,18 @@ interface TalentCardProps {
     city: string | null
     avatarUrl: string | null
     availability: string | null
-    preferredType: string | null
-    preferredRole: string | null
     noticePeriod: string | null
-    expectedSalaryMin: number | null
-    expectedSalaryMax: number | null
     visaSponsorRequired: boolean
     skills: Skill[]
+    jobPreferences: {
+      preferredRole: string | null
+      preferredType: string | null
+      expectedSalaryMin: number | null
+      expectedSalaryMax: number | null
+      preferredLocation: string | null
+      noticePeriod: string | null
+      availability: string | null
+    }[]
     user: { name: string | null; image: string | null }
   }
   showOutreachButton?: boolean
@@ -42,6 +48,13 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
     .slice(0, 2)
 
   const topSkills = seeker.skills.slice(0, 6)
+
+  const primaryPreference = seeker.jobPreferences?.[0] || {}
+  const preferredRole = primaryPreference.preferredRole
+  const preferredType = primaryPreference.preferredType
+  const expectedSalaryMin = primaryPreference.expectedSalaryMin
+  const noticePeriod = primaryPreference.noticePeriod || seeker.noticePeriod
+  const availability = primaryPreference.availability
 
   const getProficiencyStyle = (p: string) => {
     switch (p) {
@@ -72,7 +85,7 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
             <div>
               <h3 className="text-2xl font-bold text-navy leading-tight">{name}</h3>
               <p className="text-md font-bold text-slate-400 mt-1">
-                {seeker.preferredRole || seeker.headline || "Open to opportunities"}
+                {preferredRole || seeker.headline || "Open to opportunities"}
               </p>
               <div className="flex items-center gap-2 mt-1.5 overflow-hidden">
                 {seeker.city && (
@@ -81,9 +94,9 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
                     {seeker.city}
                   </div>
                 )}
-                {seeker.expectedSalaryMin && (
+                {expectedSalaryMin && (
                   <div className="text-md text-emerald-600 font-semibold whitespace-nowrap bg-emerald-50 px-2  rounded-md">
-                    £{seeker.expectedSalaryMin / 1000}k+
+                    £{expectedSalaryMin / 1000}k+
                   </div>
                 )}
               </div>
@@ -104,21 +117,21 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
       <div className="p-8 flex-1 flex flex-col gap-6">
         {/* Meta chips */}
         <div className="flex flex-wrap gap-2">
-          {seeker.preferredType && (
+          {preferredType && (
             <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-md font-semibold text-slate-600 shadow-xs">
               <Clock className="h-4 w-4 text-teal" />
-              {seeker.preferredType}
+              {preferredType}
             </span>
           )}
-          {seeker.noticePeriod && (
+          {noticePeriod && (
             <span className="px-3 py-1.5 bg-navy/5 border border-navy/10 rounded-xl text-md font-semibold text-slate-600  flex items-center gap-1.5 shadow-xs">
               <Zap className="h-4 w-4 text-amber" />
-              {seeker.noticePeriod}
+              {noticePeriod}
             </span>
           )}
-          {seeker.availability && (
+          {availability && (
             <span className="px-3 py-1.5 bg-emerald/10 border border-emerald/20 rounded-xl text-md font-semibold text-slate-600 shadow-xs">
-              {seeker.availability}
+              {availability}
             </span>
           )}
         </div>
