@@ -104,7 +104,7 @@ export default async function FavoritesPage() {
                         <Building2 className="h-4 w-4 text-teal" /> {job.organization.industry || "General"}
                       </div>
                       <div className="flex items-center gap-1.5 text-xs font-black text-slate-500 uppercase tracking-widest">
-                        <MapPin className="h-4 w-4 text-teal" /> {job.locationName || "United Kingdom"} ({job.locationType?.toLowerCase() || "n/a"})
+                        <MapPin className="h-4 w-4 text-teal" /> {[job.city, job.country].filter(Boolean).join(", ") || job.locationName || "United Kingdom"} ({job.locationType?.toLowerCase() || "n/a"})
                       </div>
                       <div className="flex items-center gap-1.5 text-xs font-black text-slate-500 uppercase tracking-widest">
                         <Clock className="h-4 w-4 text-teal" /> {job.jobType?.replace("_", " ").toLowerCase() || "n/a"}

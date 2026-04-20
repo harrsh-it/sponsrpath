@@ -143,7 +143,7 @@ export default async function JobsPage({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* Sidebar Filter */}
-            <aside className="lg:col-span-3 bg-white rounded-3xl p-8 shadow-xl shadow-navy/5 border border-slate-100 h-fit sticky top-24">
+            <aside className="lg:col-span-3 bg-white rounded-3xl p-8 shadow-xl shadow-navy/5 border border-slate-100 h-fit top-24">
               <FilterSidebar industries={industries} />
             </aside>
 
@@ -182,12 +182,12 @@ export default async function JobsPage({
                     >
                       {/* Priority Highlight for Sponsored Jobs */}
                       {job.visaSponsorBadge === "Can Sponsor Now" && (
-                        <div className="absolute top-0 right-0 px-6 py-2 bg-emerald/10 text-emerald text-[10px] font-black uppercase tracking-widest rounded-bl-2xl border-l border-b border-emerald/10">
+                        <div className="absolute top-0 left-0 px-6 py-2  bg-emerald/10 text-emerald text-[10px] font-black uppercase tracking-widest rounded-br-2xl border-l border-b border-emerald/10">
                           Priority Match
                         </div>
                       )}
 
-                      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mt-1 ">
                         <div className="flex items-start gap-6 flex-1 min-w-0">
                           <div className="w-16 h-16 rounded-2xl bg-navy/5 border border-slate-100 flex items-center justify-center shrink-0 shadow-inner group-hover:bg-teal/5 transition-all duration-300 overflow-hidden">
                           <CompanyLogo
@@ -209,7 +209,7 @@ export default async function JobsPage({
                                 <Building2 className="h-6 w-6 text-teal" /> {job.organization.industry || "General"}
                               </div>
                               <div className="flex items-center gap-1.5 text-md font-bold text-slate-500">
-                                <MapPin className="h-6 w-6 text-teal" /> {job.locationName || "United Kingdom"} ({job.locationType?.toLowerCase() || "n/a"})
+                                <MapPin className="h-6 w-6 text-teal" /> {[job.city, job.country].filter(Boolean).join(", ") || job.locationName || "United Kingdom"} ({job.locationType?.toLowerCase() || "n/a"})
                               </div>
                               <div className="flex items-center gap-1.5 text-md font-bold text-slate-500">
                                 <Clock className="h-6 w-6 text-teal" /> {job.jobType?.replace("_", " ").toLowerCase() || "n/a"}
@@ -222,8 +222,8 @@ export default async function JobsPage({
                             </div>
 
                             {job.requiredSkills && (
-                              <div className="flex flex-wrap gap-2 mt-3">
-                                {job.requiredSkills.split(",").slice(0, 4).map((skill: string) => (
+                              <div className="flex flex-wrap gap-2 mt-3 font-semibold items-center-safe ">
+                                Skills: {job.requiredSkills.split(",").slice(0, 4).map((skill: string) => (
                                   <span key={skill} className="px-3 py-1 bg-slate-50 text-slate-500 text-md font-semibold  rounded-lg border border-slate-100">
                                     {skill.trim()}
                                   </span>
@@ -235,6 +235,10 @@ export default async function JobsPage({
                                 )}
                               </div>
                             )}
+
+                            <p className="mt-3 text-slate-500/70 text-sm line-clamp-1 font-lg font-semibold border-l-2 border-slate-100 ">
+                              {job.description.split('\n')[0].replace(/[#*`_]/g, '').trim()}...
+                            </p>
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-3 shrink-0">
@@ -251,7 +255,7 @@ export default async function JobsPage({
                         <div className="flex items-center gap-4">
                            <span className="text-md font-semibold text-slate-400  flex items-center gap-1.5">
                              <Globe className="h-5 w-5" /> Tier 2 Sponsored
-                           </span>
+                           </span>      
                            <span className="text-md font-semibold text-slate-400 ">
                              Posted {new Date(job.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
                            </span>

@@ -51,7 +51,7 @@ export default function FilterSidebar({ industries }: FilterSidebarProps) {
   const hasFilters = sponsorship || jobType || location || industry || salary
 
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full space-y-8 ">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-4">
         <h3 className="text-2xl font-bold text-navy flex items-center gap-2">
@@ -60,7 +60,7 @@ export default function FilterSidebar({ industries }: FilterSidebarProps) {
         {hasFilters && (
           <button 
             onClick={clearFilters}
-            className="text-sm font-semibold text-teal hover:text-navy transition-colors flex items-center gap-1"
+            className="text-sm font-semibold text-teal hover:text-red-700  transition-colors flex items-center gap-1"
           >
             Clear all <X className="h-5 w-5" />
           </button>
@@ -97,13 +97,14 @@ export default function FilterSidebar({ industries }: FilterSidebarProps) {
       {/* Job Type */}
       <section className="space-y-4">
         <label className="text-lg font-bold text-navy   ">
-          Job Type
+          Job Type 
         </label>
         <div className="space-y-2">
           {[
-            { id: "FULL_TIME", label: "Full-time" },
-            { id: "GRADUATE_SCHEME", label: "Graduate Scheme" },
+            { id: "FULL_TIME", label: "Full Time" },
+            { id: "PART_TIME", label: "Part Time" },
             { id: "INTERNSHIP", label: "Internship" },
+            { id: "CONTRACT", label: "Contract" },
           ].map((type) => (
             <label key={type.id} className="flex items-center gap-3 cursor-pointer group mt-2">
               <div className="relative flex items-center justify-center">

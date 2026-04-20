@@ -341,23 +341,23 @@ function Button({
    Sponsor Badge
 ========================= */
 const BADGE_CONFIG: any = {
-  confirmed: {
-    label: "Confirms Tier 2",
+  "Can Sponsor Now": {
+    label: "Can Sponsor Now",
     icon: CheckCircle,
     bg: "bg-emerald-50",
     text: "text-emerald-700",
   },
-  likely: {
-    label: "Likely Sponsor",
+  "Can Sponsor After 12 Months": {
+    label: "Can Sponsor After 12 Months",
     icon: RefreshCw,
-    bg: "bg-yellow-50",
-    text: "text-yellow-700",
+    bg: "bg-amber-50",
+    text: "text-amber-700",
   },
-  unverified: {
-    label: "Unverified",
+  "No Sponsorship": {
+    label: "No Sponsorship",
     icon: HelpCircle,
-    bg: "bg-gray-100",
-    text: "text-gray-600",
+    bg: "bg-rose-50",
+    text: "text-rose-700",
   },
 };
 
@@ -389,7 +389,7 @@ const MOCK_JOBS = [
     company: "Deloitte",
     location: "London",
     salary: "£45k – £65k",
-    sponsorStatus: "confirmed",
+    sponsorStatus: "Can Sponsor Now",
   },
   {
     id: "2",
@@ -397,7 +397,7 @@ const MOCK_JOBS = [
     company: "HSBC",
     location: "Manchester",
     salary: "£35k – £48k",
-    sponsorStatus: "confirmed",
+    sponsorStatus: "Can Sponsor Now",
   },
   {
     id: "3",
@@ -405,7 +405,7 @@ const MOCK_JOBS = [
     company: "Rolls-Royce",
     location: "Derby",
     salary: "£40k – £55k",
-    sponsorStatus: "confirmed",
+    sponsorStatus: "Can Sponsor Now",
   },
   {
     id: "4",
@@ -413,7 +413,7 @@ const MOCK_JOBS = [
     company: "Unilever",
     location: "London",
     salary: "£42k – £58k",
-    sponsorStatus: "likely",
+    sponsorStatus: "Can Sponsor After 12 Months",
   },
   {
     id: "5",
@@ -421,7 +421,7 @@ const MOCK_JOBS = [
     company: "Thoughtworks",
     location: "London",
     salary: "£50k – £70k",
-    sponsorStatus: "likely",
+    sponsorStatus: "Can Sponsor After 12 Months",
   },
 ];
 

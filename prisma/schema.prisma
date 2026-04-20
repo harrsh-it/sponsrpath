@@ -1,4 +1,4 @@
-  generator client {
+generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
@@ -7,22 +7,20 @@ datasource db {
   provider = "sqlite"
 }
 
-// NextAuth necessary models
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -36,19 +34,17 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?       @unique
   emailVerified DateTime?
   image         String?
   password      String?
-  role          String    @default("USER") // USER, JOB_SEEKER, ORGANIZATION
-  
+  role          String        @default("USER")
   accounts      Account[]
-  sessions      Session[]
-  
-  organization  Organization?
   jobSeeker     JobSeeker?
+  organization  Organization?
+  sessions      Session[]
 }
 
 model VerificationToken {
@@ -60,246 +56,212 @@ model VerificationToken {
 }
 
 model Organization {
-  id             String @id @default(cuid())
-  userId         String @unique
-  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  companyName    String
-  industry       String?
-  website        String?
-  logoUrl        String?
-  description    String?
-  location       String?
-  contactEmail   String?
-  sponsorStatus  String @default("No Sponsorship Data")
-  companySize    String? // e.g. "1-10", "11-50", etc.
-  
-  jobPosts       JobPost[]
-  outreachSent   TalentOutreach[] @relation("OutreachFromOrg")
+  id            String           @id @default(cuid())
+  userId        String           @unique
+  companyName   String
+  industry      String?
+  website       String?
+  logoUrl       String?
+  sponsorStatus String           @default("No Sponsorship Data")
+  contactEmail  String?
+  description   String?
+  location      String?
+  companySize   String?
+  jobPosts      JobPost[]
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outreachSent  TalentOutreach[] @relation("OutreachFromOrg")
 }
 
 model JobSeeker {
-  id         String @id @default(cuid())
-  userId     String @unique
-  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  resumeUrl  String?
-  bio        String?
-
-  // 1. Basic Info
-  firstName  String?
-  lastName   String?
-  headline   String?
-  phone      String?
-  city       String?
-  avatarUrl  String?   // Profile photo
-  relocatable String? // "Yes", "No", "Remote only"
-
-  // Talent Showcase
-  isPublic            Boolean @default(false)  // Show in talent showcase
-  visaSponsorRequired Boolean @default(false)  // Candidate needs visa sponsorship
-  
-  // 7. Resume & Portfolio
-  portfolioUrl String?
-  githubUrl    String?
-  linkedinUrl  String?
-
-  // 8. Job Preferences (Legacy fields - now moved to JobPreference model)
-  // preferredRole    String?
-  // preferredType    String?
-  // expectedSalaryMin Int?
-  // expectedSalaryMax Int?
-  // preferredLocation String?
-  // noticePeriod     String?
-  // availability     String?
-
-  // 9. Additional Info
-  gender           String?   // Male, Female, Prefer not to say
-  dob              DateTime?
-  differentlyAbled String?
-  veteranStatus    String?
-
-  // Relations
-  jobPreferences   JobPreference[]
-  skills           Skill[]
-  experience       Experience[]
-  education        Education[]
-  certifications   Certification[]
-  languages        Language[]
-  applications     JobApplication[]
-  interviews       Interview[]
-  savedJobs        SavedJob[]
-  outreachReceived TalentOutreach[] @relation("OutreachToSeeker")
+  id                  String           @id @default(cuid())
+  userId              String           @unique
+  resumeUrl           String?
+  bio                 String?
+  firstName           String?
+  lastName            String?
+  headline            String?
+  phone               String?
+  city                String?
+  avatarUrl           String?
+  relocatable         String?
+  isPublic            Boolean          @default(false)
+  visaSponsorRequired Boolean          @default(false)
+  portfolioUrl        String?
+  githubUrl           String?
+  linkedinUrl         String?
+  gender              String?
+  dob                 DateTime?
+  differentlyAbled    String?
+  veteranStatus       String?
+  certifications      Certification[]
+  education           Education[]
+  experience          Experience[]
+  interviews          Interview[]
+  applications        JobApplication[]
+  jobPreferences      JobPreference[]
+  user                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  languages           Language[]
+  savedJobs           SavedJob[]
+  skills              Skill[]
+  outreachReceived    TalentOutreach[] @relation("OutreachToSeeker")
 }
 
 model JobPreference {
-  id              String    @id @default(cuid())
-  jobSeekerId     String
-  jobSeeker       JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
-  
-  preferredRole    String?
-  preferredType    String?
+  id                String    @id @default(cuid())
+  jobSeekerId       String
+  preferredRole     String?
+  preferredType     String?
   expectedSalaryMin Int?
   expectedSalaryMax Int?
   preferredLocation String?
-  noticePeriod     String?
-  availability     String?
-  
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  noticePeriod      String?
+  availability      String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  jobSeeker         JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
 }
 
 model Skill {
-  id          String @id @default(cuid())
+  id          String    @id @default(cuid())
   jobSeekerId String
-  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
   name        String
-  proficiency String // "Expert", "Intermediate", "Beginner"
+  proficiency String
+  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
 }
 
 model Experience {
-  id          String @id @default(cuid())
-  jobSeekerId String
-  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
-  title       String
-  company     String
-  startDate   DateTime
-  endDate     DateTime? // Null if current
-  isCurrent   Boolean @default(false)
-  empType     String // Full-time / Part-time / Freelance
-  location    String // Remote / On-site / Hybrid
+  id               String    @id @default(cuid())
+  jobSeekerId      String
+  title            String
+  company          String
+  startDate        DateTime
+  endDate          DateTime?
+  isCurrent        Boolean   @default(false)
+  empType          String
+  location         String
   responsibilities String?
+  jobSeeker        JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
 }
 
 model Education {
-  id          String @id @default(cuid())
-  jobSeekerId String
-  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
-  degree      String
-  institution String
+  id            String    @id @default(cuid())
+  jobSeekerId   String
+  degree        String
+  institution   String
   yearOfPassing Int
-  grade       String?
+  grade         String?
+  jobSeeker     JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
 }
 
 model Certification {
-  id          String @id @default(cuid())
+  id          String    @id @default(cuid())
   jobSeekerId String
-  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
   name        String
   issuer      String
   year        Int
   url         String?
+  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
 }
 
 model Language {
-  id          String @id @default(cuid())
+  id          String    @id @default(cuid())
   jobSeekerId String
-  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
   name        String
-  proficiency String // Fluent, Native, etc.
+  proficiency String
+  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
 }
 
 model JobPost {
-  id               String   @id @default(cuid())
-  orgId            String
-  organization     Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  title            String
-  description      String
-  minSalary        Int?
-  maxSalary        Int?
-  visaSponsorBadge String   @default("No Sponsorship Data") // Can Sponsor Now, Can Sponsor After 12 Months, No Sponsorship
-  jobType          String   @default("FULL_TIME") // INTERNSHIP, GRADUATE_SCHEME, FULL_TIME
-  locationType     String   @default("ONSITE") // REMOTE, HYBRID, ONSITE
-  locationName     String?  // e.g., "London", "Manchester"
-  city             String?
-  state            String?
-  country          String?  @default("United Kingdom")
-  
-  // Salary
-  currency         String   @default("GBP")
-  salaryType       String   @default("YEARLY") // MONTHLY, YEARLY, HOURLY
-  benefits         String?  // Text description of benefits
-  equityBonus      String?  // Optional: Equity / Bonus
-  
-  // Requirements
-  requiredSkills   String?  // Comma-separated tags
-  minExperience    Int?
-  maxExperience    Int?
-  education        String?
-  certifications   String?
-  
-  // Responsibilities
-  responsibilities String?  // Stringified JSON array
-  
-  // Application
-  openings         Int      @default(1)
-  howToApply       String   @default("INTERNAL") // INTERNAL, EXTERNAL
-  externalUrl      String?
-  contactEmail     String?
-  
-  // Company Info (at time of posting)
-  companyName      String?
+  id                 String           @id @default(cuid())
+  orgId              String
+  title              String
+  description        String
+  minSalary          Int?
+  maxSalary          Int?
+  visaSponsorBadge   String           @default("No Sponsorship Data")
+  jobType            String           @default("FULL_TIME")
+  locationType       String           @default("ONSITE")
+  locationName       String?
+  city               String?
+  state              String?
+  country            String?          @default("United Kingdom")
+  currency           String           @default("GBP")
+  salaryType         String           @default("YEARLY")
+  benefits           String?
+  requiredSkills     String?
+  minExperience      Int?
+  maxExperience      Int?
+  education          String?
+  certifications     String?
+  responsibilities   String?
+  openings           Int              @default(1)
+  howToApply         String           @default("INTERNAL")
+  externalUrl        String?
+  contactEmail       String?
+  isActive           Boolean          @default(true)
+  closingDate        DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
   companyDescription String?
-  websiteUrl       String?
-  industry         String?
-  logoUrl          String?
-  
-  isActive         Boolean  @default(true)
-  closingDate      DateTime?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  applications     JobApplication[]
-  interviews       Interview[]
-  savedJobs        SavedJob[]
+  companyName        String?
+  industry           String?
+  logoUrl            String?
+  websiteUrl         String?
+  equityBonus        String?
+  interviews         Interview[]
+  applications       JobApplication[]
+  organization       Organization     @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  savedJobs          SavedJob[]
 }
 
 model JobApplication {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   jobPostId   String
-  jobPost     JobPost  @relation(fields: [jobPostId], references: [id], onDelete: Cascade)
   jobSeekerId String
+  status      String    @default("Applied")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
-  status      String   @default("Applied") // Applied, Phone Screen, Interview, Offer, Rejected
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  jobPost     JobPost   @relation(fields: [jobPostId], references: [id], onDelete: Cascade)
 
   @@unique([jobPostId, jobSeekerId])
 }
 
 model Interview {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   jobPostId   String
-  jobPost     JobPost  @relation(fields: [jobPostId], references: [id], onDelete: Cascade)
   jobSeekerId String
-  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
   scheduledAt DateTime
-  type        String   @default("Video Call")
-  round       String   @default("Round 1")
-  status      String   @default("Scheduled") // Scheduled, Completed, Cancelled
-  createdAt   DateTime @default(now())
+  type        String    @default("Video Call")
+  round       String    @default("Round 1")
+  status      String    @default("Scheduled")
+  createdAt   DateTime  @default(now())
+  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
+  jobPost     JobPost   @relation(fields: [jobPostId], references: [id], onDelete: Cascade)
 }
 
 model SavedJob {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   jobSeekerId String
-  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
   jobPostId   String
-  jobPost     JobPost  @relation(fields: [jobPostId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
+  jobPost     JobPost   @relation(fields: [jobPostId], references: [id], onDelete: Cascade)
+  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id], onDelete: Cascade)
 
   @@unique([jobSeekerId, jobPostId])
 }
 
 model TalentOutreach {
-  id            String    @id @default(cuid())
+  id            String       @id @default(cuid())
   orgId         String
-  organization  Organization @relation("OutreachFromOrg", fields: [orgId], references: [id], onDelete: Cascade)
   jobSeekerId   String
-  jobSeeker     JobSeeker @relation("OutreachToSeeker", fields: [jobSeekerId], references: [id], onDelete: Cascade)
   message       String
   interviewDate DateTime?
-  status        String    @default("Pending") // Pending, Accepted, Declined, Scheduled
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  status        String       @default("Pending")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  jobSeeker     JobSeeker    @relation("OutreachToSeeker", fields: [jobSeekerId], references: [id], onDelete: Cascade)
+  organization  Organization @relation("OutreachFromOrg", fields: [orgId], references: [id], onDelete: Cascade)
 
   @@unique([orgId, jobSeekerId])
 }

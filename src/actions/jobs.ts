@@ -56,7 +56,7 @@ export async function createJobAction(formData: FormData) {
         description,
         minSalary: minSalaryStr ? parseInt(minSalaryStr) : null,
         maxSalary: maxSalaryStr ? parseInt(maxSalaryStr) : null,
-        visaSponsorBadge: visaSponsorBadge || "No Sponsorship Data",
+        visaSponsorBadge: visaSponsorBadge || "No Sponsorship",
         jobType: jobType || "FULL_TIME",
         locationType: locationType || "ONSITE",
         city,
@@ -82,6 +82,7 @@ export async function createJobAction(formData: FormData) {
         websiteUrl: websiteUrl || organization.website,
         industry: industry || organization.industry,
         logoUrl,
+        locationName: city ? `${city}, ${country || "United Kingdom"}` : (country || "United Kingdom"),
         isActive: true,
       }
     })
@@ -148,7 +149,7 @@ export async function editJobAction(id: string, formData: FormData) {
         description,
         minSalary: minSalaryStr ? parseInt(minSalaryStr) : null,
         maxSalary: maxSalaryStr ? parseInt(maxSalaryStr) : null,
-        visaSponsorBadge: visaSponsorBadge || "No Sponsorship Data",
+        visaSponsorBadge: visaSponsorBadge || "No Sponsorship",
         isActive: isActiveStr === "true",
         jobType: jobType || "FULL_TIME",
         locationType: locationType || "ONSITE",
@@ -174,6 +175,7 @@ export async function editJobAction(id: string, formData: FormData) {
         companyDescription,
         websiteUrl,
         industry,
+        locationName: city ? `${city}, ${country || "United Kingdom"}` : (country || "United Kingdom"),
       }
     })
   } catch (error) {

@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
-import CreateJobForm from "@/components/jobs/CreateJobForm"
+import JobForm from "@/components/jobs/JobForm"
 
 export default async function CreateJobPage() {
   const session = await auth()
@@ -20,7 +20,7 @@ export default async function CreateJobPage() {
 
   return (
     <div className="w-full">
-      <CreateJobForm organization={organization} />
+      <JobForm organization={organization} />
     </div>
   )
 }

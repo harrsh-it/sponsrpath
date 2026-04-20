@@ -14,15 +14,13 @@ export default function EditJobClient({ job }: { job: any }) {
     job.minSalary || 35000, 
     job.maxSalary || 80000
   ])
-  const [sponsorBadge, setSponsorBadge] = useState<SponsorStatus>(job.visaSponsorBadge as SponsorStatus || "No Sponsorship Data")
+  const [sponsorBadge, setSponsorBadge] = useState<SponsorStatus>(job.visaSponsorBadge as SponsorStatus || "No Sponsorship")
   const [isActive, setIsActive] = useState(job.isActive)
 
   const badgeOptions: SponsorStatus[] = [
-    "Active Sponsor (Verified)",
-    "Active Sponsor (Register Match)",
-    "Potential Sponsor (Post 12 Months)",
-    "No Sponsorship Data",
-    "Confirmed Non-Sponsor"
+    "Can Sponsor Now",
+    "Can Sponsor After 12 Months",
+    "No Sponsorship"
   ]
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

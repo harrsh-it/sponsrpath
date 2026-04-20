@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
-import EditJobClient from "./EditJobClient"
+import JobForm from "@/components/jobs/JobForm"
 
 export default async function EditJobPage({
   params
@@ -33,6 +33,9 @@ export default async function EditJobPage({
   }
 
   return (
-    <EditJobClient job={JSON.parse(JSON.stringify(job))} />
+    <JobForm 
+      organization={organization}
+      job={JSON.parse(JSON.stringify(job))} 
+    />
   )
 }

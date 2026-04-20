@@ -32,8 +32,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     include: { organization: { select: { companyName: true } } },
   })
   if (!job) return { title: "Job Not Found | SponsorPath" }
+  const displayCompanyName = job.companyName || job.organization.companyName;
   return {
-    title: `${job.title} at ${job.organization.companyName} | SponsorPath`,
+    title: `${job.title} at ${displayCompanyName} | SponsorPath`,
     description: job.description?.slice(0, 160),
   }
 }
@@ -47,7 +48,40 @@ export default async function JobDetailPage({
 
   const job = await prisma.jobPost.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      minSalary: true,
+      maxSalary: true,
+      visaSponsorBadge: true,
+      jobType: true,
+      locationType: true,
+      locationName: true,
+      city: true,
+      state: true,
+      country: true,
+      currency: true,
+      salaryType: true,
+      benefits: true,
+      equityBonus: true,
+      requiredSkills: true,
+      minExperience: true,
+      maxExperience: true,
+      education: true,
+      certifications: true,
+      responsibilities: true,
+      openings: true,
+      howToApply: true,
+      externalUrl: true,
+      contactEmail: true,
+      companyName: true,
+      companyDescription: true,
+      websiteUrl: true,
+      industry: true,
+      logoUrl: true,
+      createdAt: true,
+      closingDate: true,
       organization: {
         select: {
           companyName: true,
@@ -107,6 +141,14 @@ export default async function JobDetailPage({
       })
     : null
 
+  // Snapshot fallbacks
+  const displayCompanyName = job.companyName || job.organization.companyName
+  const displayCompanyLogo = job.logoUrl || job.organization.logoUrl
+  const displayIndustry = job.industry || job.organization.industry
+  const displayWebsite = job.websiteUrl || job.organization.website
+  const displayDescription = job.companyDescription || job.organization.description
+  const locationSummary = [job.city, job.state, job.country].filter(Boolean).join(", ") || job.locationName || "United Kingdom"
+
   return (
     <>
       <Navbar />
@@ -126,8 +168,8 @@ export default async function JobDetailPage({
               {/* Logo */}
               <div className="w-20 h-20 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden shadow-2xl">
                 <CompanyLogo
-                  logoUrl={job.organization.logoUrl}
-                  companyName={job.organization.companyName}
+                  logoUrl={displayCompanyLogo}
+                  companyName={displayCompanyName}
                   textClassName="text-2xl text-white"
                 />
               </div>
@@ -145,17 +187,17 @@ export default async function JobDetailPage({
                   {job.title}
                 </h1>
                 <p className="text-white/60 font-bold text-lg mt-2 uppercase tracking-wider">
-                  {job.organization.companyName}
+                  {displayCompanyName}
                 </p>
 
                 <div className="flex flex-wrap items-center gap-5 mt-6">
                   <span className="flex items-center gap-1.5 text-xs font-black text-white/50 uppercase tracking-widest">
                     <Building2 className="h-4 w-4 text-teal" />
-                    {job.organization.industry || "General"}
+                    {displayIndustry || "General"}
                   </span>
                   <span className="flex items-center gap-1.5 text-xs font-black text-white/50 uppercase tracking-widest">
                     <MapPin className="h-4 w-4 text-teal" />
-                    {job.locationName || "United Kingdom"} &middot;{" "}
+                    {locationSummary} &middot;{" "}
                     {job.locationType?.toLowerCase() || "onsite"}
                   </span>
                   <span className="flex items-center gap-1.5 text-xs font-black text-white/50 uppercase tracking-widest">
@@ -309,11 +351,11 @@ export default async function JobDetailPage({
                 <h3 className="text-sm font-black text-navy uppercase tracking-widest mb-6">Job Summary</h3>
                 <dl className="space-y-4">
                   <SummaryRow label="Job Type" value={job.jobType?.replace("_", " ") || "Full Time"} />
-                  <SummaryRow label="Location" value={`${job.locationName || "UK"} (${job.locationType || "Onsite"})`} />
+                  <SummaryRow label="Location" value={`${locationSummary} (${job.locationType || "Onsite"})`} />
                   {job.minSalary && (
                     <SummaryRow
                       label="Salary"
-                      value={`£${(job.minSalary / 1000).toFixed(0)}k – £${((job.maxSalary ?? job.minSalary) / 1000).toFixed(0)}k / yr`}
+                      value={`£${(job.minSalary / 1000).toFixed(0)}k – £${((job.maxSalary ?? job.minSalary) / 1000).toFixed(0)}k / ${job.salaryType?.toLowerCase() || "yr"}`}
                     />
                   )}
                   <SummaryRow label="Openings" value={`${job.openings} position${job.openings !== 1 ? "s" : ""}`} />
@@ -328,19 +370,19 @@ export default async function JobDetailPage({
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 rounded-xl bg-navy/5 border border-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
                     <CompanyLogo
-                      logoUrl={job.organization.logoUrl}
-                      companyName={job.organization.companyName}
+                      logoUrl={displayCompanyLogo}
+                      companyName={displayCompanyName}
                       textClassName="text-sm"
                     />
                   </div>
                   <div>
-                    <p className="font-black text-navy text-sm">{job.organization.companyName}</p>
-                    <p className="text-xs text-slate-400 font-bold">{job.organization.industry || "Technology"}</p>
+                    <p className="font-black text-navy text-sm">{displayCompanyName}</p>
+                    <p className="text-xs text-slate-400 font-bold">{displayIndustry || "Technology"}</p>
                   </div>
                 </div>
-                {job.organization.description && (
+                {displayDescription && (
                   <p className="text-xs text-slate-500 leading-relaxed mb-4 line-clamp-4">
-                    {job.organization.description}
+                    {displayDescription}
                   </p>
                 )}
                 <dl className="space-y-3 text-xs">
@@ -356,9 +398,9 @@ export default async function JobDetailPage({
                       {job.organization.companySize} employees
                     </div>
                   )}
-                  {job.organization.website && (
+                  {displayWebsite && (
                     <a
-                      href={job.organization.website}
+                      href={displayWebsite}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-teal font-bold hover:underline"

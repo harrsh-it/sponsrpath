@@ -5,11 +5,6 @@ export type SponsorStatus =
   | "Can Sponsor Now"
   | "Can Sponsor After 12 Months"
   | "No Sponsorship"
-  | "Active Sponsor (Verified)"
-  | "Active Sponsor (Register Match)"
-  | "Potential Sponsor (Post 12 Months)"
-  | "No Sponsorship Data"
-  | "Confirmed Non-Sponsor"
 
 interface VisaBadgeProps {
   status: SponsorStatus | string
@@ -21,15 +16,13 @@ export function VisaBadge({ status, className = "", showLabel = true }: VisaBadg
   let details = {
     colorInfo: "bg-slate-100 text-slate-700 border-slate-200",
     icon: HelpCircle,
-    label: status === "No Sponsorship Data" ? "Sponsorship Unverified" : status,
+    label: status || "Sponsorship Unverified",
     tooltip: "We don't have enough data to determine if this company sponsors Tier 2 visas."
   }
 
   // Determine styles and config based on status
   switch (status) {
     case "Can Sponsor Now":
-    case "Active Sponsor (Verified)":
-    case "Active Sponsor (Register Match)":
       details = {
         colorInfo: "bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm",
         icon: ShieldCheck,
@@ -38,7 +31,6 @@ export function VisaBadge({ status, className = "", showLabel = true }: VisaBadg
       }
       break
     case "Can Sponsor After 12 Months":
-    case "Potential Sponsor (Post 12 Months)":
       details = {
         colorInfo: "bg-amber-50 text-amber-700 border-amber-200",
         icon: Clock,
@@ -47,7 +39,6 @@ export function VisaBadge({ status, className = "", showLabel = true }: VisaBadg
       }
       break
     case "No Sponsorship":
-    case "Confirmed Non-Sponsor":
       details = {
         colorInfo: "bg-rose-50 text-rose-700 border-rose-200",
         icon: XCircle,
@@ -55,7 +46,6 @@ export function VisaBadge({ status, className = "", showLabel = true }: VisaBadg
         tooltip: "This company has explicitly stated they do not provide visa sponsorship.",
       }
       break
-    case "No Sponsorship Data":
     default:
       // default is already set
       break

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { createJobAction } from "@/actions/jobs"
+import { createJobAction, editJobAction } from "@/actions/jobs"
 import { SalarySlider } from "@/components/ui/SalarySlider"
 import { VisaBadge, SponsorStatus } from "@/components/ui/VisaBadge"
 import { 
@@ -9,11 +9,11 @@ import {
   MapPin, Clock, Globe, Plus, Trash2, 
   CheckCircle2, Building2, Send, Zap,
   ExternalLink, FileText, Layout, Coins,
-  Target, Rocket, UserPlus
+  Target, Rocket, UserPlus, CheckCircle, XCircle
 } from "lucide-react"
 import Link from "next/link"
 
-interface CreateJobFormProps {
+interface JobFormProps {
   organization: {
     companyName: string
     industry: string | null
@@ -24,27 +24,39 @@ interface CreateJobFormProps {
     logoUrl: string | null
     companySize: string | null
   }
+  job?: any
 }
 
-export default function CreateJobForm({ organization }: CreateJobFormProps) {
+export default function JobForm({ organization, job }: JobFormProps) {
+  const isEdit = !!job;
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [salaryRange, setSalaryRange] = useState<[number, number]>([35000, 80000])
-  const [sponsorBadge, setSponsorBadge] = useState<SponsorStatus>("No Sponsorship Data")
+  const [salaryRange, setSalaryRange] = useState<[number, number]>([
+    job?.minSalary || 35000, 
+    job?.maxSalary || 80000
+  ])
+  const [sponsorBadge, setSponsorBadge] = useState<SponsorStatus>(
+    (job?.visaSponsorBadge as SponsorStatus) || "No Sponsorship"
+  )
+  const [isActive, setIsActive] = useState(job?.isActive ?? true)
   
   // Dynamic Inputs State
-  const [skills, setSkills] = useState<string[]>([])
+  const [skills, setSkills] = useState<string[]>(
+    job?.requiredSkills ? job.requiredSkills.split(",").filter(Boolean) : []
+  )
   const [skillInput, setSkillInput] = useState("")
-  const [responsibilities, setResponsibilities] = useState<string[]>([""])
-  const [benefitsList, setBenefitsList] = useState<string[]>([])
+  const [responsibilities, setResponsibilities] = useState<string[]>(
+    job?.responsibilities ? JSON.parse(job.responsibilities) : [""]
+  )
+  const [benefitsList, setBenefitsList] = useState<string[]>(
+    job?.benefits ? job.benefits.split(",").filter(Boolean) : []
+  )
   const [benefitInput, setBenefitInput] = useState("")
   
   const badgeOptions: SponsorStatus[] = [
-    "Active Sponsor (Verified)",
-    "Active Sponsor (Register Match)",
-    "Potential Sponsor (Post 12 Months)",
-    "No Sponsorship Data",
-    "Confirmed Non-Sponsor"
+    "Can Sponsor Now",
+    "Can Sponsor After 12 Months",
+    "No Sponsorship"
   ]
 
   const addSkill = () => {
@@ -97,9 +109,13 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
     formData.append("requiredSkills", skills.join(","))
     formData.append("benefits", benefitsList.join(","))
     formData.append("responsibilities", JSON.stringify(responsibilities.filter(r => r.trim() !== "")))
+    formData.append("isActive", isActive.toString())
 
     try {
-      const result = await createJobAction(formData)
+      const result = isEdit 
+        ? await editJobAction(job.id, formData)
+        : await createJobAction(formData)
+        
       if (result?.error) {
         setError(result.error)
         setLoading(false)
@@ -120,21 +136,39 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
         </Link>
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-heading font-black text-navy tracking-tight">Create a Job Listing</h1>
+            <h1 className="text-4xl font-heading font-black text-navy tracking-tight">
+              {isEdit ? "Update Job Listing" : "Create a Job Listing"}
+            </h1>
             <p className="text-slate-500 font-medium mt-2 text-lg">
-              Fill in the details below to find your next great hire for <span className="text-navy font-bold">{organization.companyName}</span>.
+              {isEdit ? `Updating: ${job.title}` : `Fill in the details below to find your next great hire for ${organization.companyName}.`}
             </p>
           </div>
-          <div className="hidden md:block">
+          <div className="flex items-center gap-4">
              <div className="bg-amber/10 border border-amber/20 rounded-2xl px-5 py-4 flex items-center gap-4">
                 <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-amber shadow-sm">
                    <Rocket className="h-5 w-5" />
                 </div>
                 <div>
                    <p className="text-[10px] font-black text-amber uppercase tracking-widest leading-none mb-1">Status</p>
-                   <p className="text-xs font-bold text-navy uppercase tracking-widest">Drafting Mode</p>
+                   <p className="text-xs font-bold text-navy uppercase tracking-widest">{isEdit ? "Editing Mode" : "Drafting Mode"}</p>
                 </div>
              </div>
+
+             <button 
+                type="button"
+                onClick={() => setIsActive(!isActive)}
+                className={`flex items-center gap-3 px-6 py-4 rounded-2xl border-2 transition-all duration-300 ${
+                  isActive 
+                    ? "bg-emerald/5 border-emerald/20 text-emerald hover:bg-emerald/10" 
+                    : "bg-slate-50 border-slate-200 text-slate-400 hover:bg-slate-100"
+                }`}
+              >
+                {isActive ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+                <div className="text-left">
+                   <p className="text-[10px] font-black uppercase tracking-widest leading-none mb-1">Visibility</p>
+                   <p className="text-xs font-black uppercase tracking-widest">{isActive ? "Active" : "Draft/Closed"}</p>
+                </div>
+             </button>
           </div>
         </div>
       </div>
@@ -157,6 +191,7 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
                 id="title" 
                 name="title" 
                 required 
+                defaultValue={job?.title}
                 placeholder="e.g. Senior Frontend Developer" 
                 className="text-lg"
               />
@@ -164,12 +199,12 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
 
             <div className="md:col-span-1">
               <Label htmlFor="companyName" required>Display Company Name</Label>
-              <Input id="companyName" name="companyName" required defaultValue={organization.companyName} />
+              <Input id="companyName" name="companyName" required defaultValue={job?.companyName || organization.companyName} />
             </div>
 
             <div className="md:col-span-1">
               <Label htmlFor="locationType" required>Remote / Hybrid / On-site</Label>
-              <Select id="locationType" name="locationType" defaultValue="ONSITE">
+              <Select id="locationType" name="locationType" defaultValue={job?.locationType || "ONSITE"}>
                 <option value="ONSITE">On-site</option>
                 <option value="HYBRID">Hybrid</option>
                 <option value="REMOTE">Fully Remote</option>
@@ -183,6 +218,7 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
                 name="description" 
                 required 
                 rows={12}
+                defaultValue={job?.description}
                 placeholder="Describe the role, impact, and day-to-day expectations..." 
               />
               <p className="mt-3 text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-2">
@@ -193,15 +229,15 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:col-span-2">
               <div>
                 <Label htmlFor="city" required>City</Label>
-                <Input id="city" name="city" required placeholder="e.g. London" />
+                <Input id="city" name="city" required defaultValue={job?.city} placeholder="e.g. London" />
               </div>
               <div>
                 <Label htmlFor="state">State / Province</Label>
-                <Input id="state" name="state" placeholder="e.g. Greater London" />
+                <Input id="state" name="state" defaultValue={job?.state} placeholder="e.g. Greater London" />
               </div>
               <div>
                 <Label htmlFor="country" required>Country</Label>
-                <Input id="country" name="country" required defaultValue="United Kingdom" />
+                <Input id="country" name="country" required defaultValue={job?.country || "United Kingdom"} />
               </div>
             </div>
 
@@ -210,7 +246,7 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                  {["FULL_TIME", "PART_TIME", "INTERNSHIP", "CONTRACT"].map((type) => (
                    <label key={type} className="relative flex items-center justify-center p-4 border rounded-2xl cursor-pointer hover:bg-slate-50 transition-all has-checked:bg-navy has-checked:text-white has-checked:border-navy group">
-                      <input type="radio" name="jobType" value={type} defaultChecked={type === "FULL_TIME"} className="sr-only" />
+                      <input type="radio" name="jobType" value={type} defaultChecked={type === (job?.jobType || "FULL_TIME")} className="sr-only" />
                       <span className="text-[10px] font-black uppercase tracking-widest">{type.replace("_", " ")}</span>
                    </label>
                  ))}
@@ -246,7 +282,7 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
                 <Label htmlFor="salaryType" required>Salary Type</Label>
-                <Select id="salaryType" name="salaryType" defaultValue="YEARLY">
+                <Select id="salaryType" name="salaryType" defaultValue={job?.salaryType || "YEARLY"}>
                   <option value="YEARLY">Yearly</option>
                   <option value="MONTHLY">Monthly</option>
                   <option value="HOURLY">Hourly</option>
@@ -254,11 +290,11 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
               </div>
               <div>
                 <Label htmlFor="currency" required>Currency</Label>
-                <Input id="currency" name="currency" required defaultValue="GBP" />
+                <Input id="currency" name="currency" required defaultValue={job?.currency || "GBP"} />
               </div>
               <div>
                 <Label htmlFor="equityBonus">Equity / Bonus (Optional)</Label>
-                <Input id="equityBonus" name="equityBonus" placeholder="e.g. 0.5% equity, £5k bonus" />
+                <Input id="equityBonus" name="equityBonus" defaultValue={job?.equityBonus} placeholder="e.g. 0.5% equity, £5k bonus" />
               </div>
             </div>
 
@@ -332,20 +368,20 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="minExperience">Min Experience (Years)</Label>
-                  <Input type="number" id="minExperience" name="minExperience" placeholder="0" min={0} />
+                  <Input type="number" id="minExperience" name="minExperience" defaultValue={job?.minExperience} placeholder="0" min={0} />
                 </div>
                 <div>
                   <Label htmlFor="maxExperience">Max Experience (Years)</Label>
-                  <Input type="number" id="maxExperience" name="maxExperience" placeholder="5" min={0} />
+                  <Input type="number" id="maxExperience" name="maxExperience" defaultValue={job?.maxExperience} placeholder="5" min={0} />
                 </div>
               </div>
               <div>
                 <Label htmlFor="education">Education Requirements</Label>
-                <Input id="education" name="education" placeholder="e.g. Bachelor's in CS or equivalent" />
+                <Input id="education" name="education" defaultValue={job?.education} placeholder="e.g. Bachelor's in CS or equivalent" />
               </div>
               <div className="md:col-span-2">
                 <Label htmlFor="certifications">Preferred Certifications</Label>
-                <Input id="certifications" name="certifications" placeholder="e.g. AWS Certified Solutions Architect, PMP" />
+                <Input id="certifications" name="certifications" defaultValue={job?.certifications} placeholder="e.g. AWS Certified Solutions Architect, PMP" />
               </div>
             </div>
           </div>
@@ -390,26 +426,26 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div>
               <Label htmlFor="howToApply" required>Application Method</Label>
-              <Select id="howToApply" name="howToApply" defaultValue="INTERNAL">
+              <Select id="howToApply" name="howToApply" defaultValue={job?.howToApply || "INTERNAL"}>
                 <option value="INTERNAL">Standard Dashboard Form (Recommended)</option>
                 <option value="EXTERNAL">External URL / Career Page</option>
               </Select>
             </div>
             <div>
               <Label htmlFor="externalUrl">External Redirect URL</Label>
-              <Input id="externalUrl" name="externalUrl" placeholder="https://careers.company.com/jobs/123" />
+              <Input id="externalUrl" name="externalUrl" defaultValue={job?.externalUrl} placeholder="https://careers.company.com/jobs/123" />
             </div>
             <div>
               <Label htmlFor="closingDate" required>Application Deadline</Label>
-              <Input type="date" id="closingDate" name="closingDate" required />
+              <Input type="date" id="closingDate" name="closingDate" defaultValue={job?.closingDate ? new Date(job.closingDate).toISOString().split('T')[0] : ""} required />
             </div>
             <div>
               <Label htmlFor="openings" required>Number of Openings</Label>
-              <Input type="number" id="openings" name="openings" defaultValue={1} min={1} required />
+              <Input type="number" id="openings" name="openings" defaultValue={job?.openings || 1} min={1} required />
             </div>
             <div className="md:col-span-2">
               <Label htmlFor="contactEmail">Internal Contact Email (Optional)</Label>
-              <Input type="email" id="contactEmail" name="contactEmail" placeholder="hiring@company.com" />
+              <Input type="email" id="contactEmail" name="contactEmail" defaultValue={job?.contactEmail} placeholder="hiring@company.com" />
               <p className="mt-3 text-[10px] text-slate-400 font-bold uppercase tracking-widest italic">This email will receive applications and notifications.</p>
             </div>
           </div>
@@ -461,7 +497,7 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
                 id="companyDescription" 
                 name="companyDescription" 
                 required 
-                defaultValue={organization.description || ""}
+                defaultValue={job?.companyDescription || organization.description || ""}
                 placeholder="Briefly describe your company mission, culture, and why people love working there..." 
                 rows={6}
               />
@@ -470,12 +506,12 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
               <Label htmlFor="websiteUrl" required>Website URL</Label>
               <div className="relative">
                  <Globe className="absolute left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
-                 <Input id="websiteUrl" name="websiteUrl" required defaultValue={organization.website || ""} placeholder="https://company.com" className="pl-14" />
+                 <Input id="websiteUrl" name="websiteUrl" required defaultValue={job?.websiteUrl || organization.website || ""} placeholder="https://company.com" className="pl-14" />
               </div>
             </div>
             <div>
               <Label htmlFor="companySize" required>Company Size</Label>
-              <Select id="companySize" name="companySize" required defaultValue={organization.companySize || ""}>
+              <Select id="companySize" name="companySize" required defaultValue={job?.companySize || organization.companySize || ""}>
                 <option value="">Select Company Size...</option>
                 <option value="1-10">1-10 Employees</option>
                 <option value="11-50">11-50 Employees</option>
@@ -487,11 +523,11 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
             </div>
             <div>
               <Label htmlFor="industry" required>Industry</Label>
-              <Input id="industry" name="industry" required defaultValue={organization.industry || ""} placeholder="e.g. FinTech, Healthcare, SaaS" />
+              <Input id="industry" name="industry" required defaultValue={job?.industry || organization.industry || ""} placeholder="e.g. FinTech, Healthcare, SaaS" />
             </div>
             <div className="flex items-center gap-8 p-8 bg-white rounded-[2rem] border border-slate-100">
                <div className="w-20 h-20 rounded-[1.5rem] bg-navy text-white flex items-center justify-center text-xl font-black shrink-0 shadow-xl overflow-hidden">
-                  {organization.logoUrl ? <img src={organization.logoUrl} className="w-full h-full object-cover" /> : organization.companyName.substring(0, 2).toUpperCase()}
+                  {(job?.logoUrl || organization.logoUrl) ? <img src={job?.logoUrl || organization.logoUrl} className="w-full h-full object-cover" /> : (job?.companyName || organization.companyName).substring(0, 2).toUpperCase()}
                </div>
                <div className="flex-1">
                   <p className="text-xs font-black text-navy uppercase tracking-widest mb-1">Company Logo</p>
@@ -508,8 +544,12 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
         <div className="sticky bottom-8 z-40">
            <div className="bg-white/80 backdrop-blur-2xl p-8 md:p-10 border-2 border-slate-100 rounded-[3.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] flex flex-col md:flex-row items-center justify-between gap-8 translate-y-0 hover:-translate-y-1 transition-all duration-500">
              <div className="text-center md:text-left">
-               <h4 className="text-2xl font-black text-navy tracking-tight mb-1">Ready to publish?</h4>
-               <p className="text-sm text-slate-500 font-medium">Your listing will be instantly visible to potential candidates.</p>
+               <h4 className="text-2xl font-black text-navy tracking-tight mb-1">
+                 {isEdit ? "Ready to save?" : "Ready to publish?"}
+               </h4>
+               <p className="text-sm text-slate-500 font-medium">
+                 {isEdit ? "Your changes will be immediately visible to candidates." : "Your listing will be instantly visible to potential candidates."}
+               </p>
              </div>
              <div className="flex items-center gap-6 w-full md:w-auto">
                <Link 
@@ -526,11 +566,11 @@ export default function CreateJobForm({ organization }: CreateJobFormProps) {
                  {loading ? (
                    <>
                      <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
-                     Publishing...
+                     {isEdit ? "Saving..." : "Publishing..."}
                    </>
                  ) : (
                    <>
-                     Publish Now
+                     {isEdit ? "Save Changes" : "Publish Now"}
                      <CheckCircle2 className="h-4 w-4 group-hover:scale-110 transition-transform" />
                    </>
                  )}
