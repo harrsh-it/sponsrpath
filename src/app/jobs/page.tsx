@@ -14,6 +14,8 @@ export const metadata = {
   description: "Find UK jobs with Tier 2 visa sponsorship from verified employers.",
 }
 
+
+
 const statusMap: Record<string, string> = {
   now: "Can Sponsor Now",
   later: "Can Sponsor After 12 Months",

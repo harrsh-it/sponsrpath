@@ -15,6 +15,7 @@ interface SearchParams {
   visaOnly?: string
   page?: string
   notice?: string
+  relocatable?: string
 }
 
 export const metadata = {
@@ -44,7 +45,24 @@ export default async function TalentShowcasePage({
   }
 
   if (searchParams.location) where.city = { contains: searchParams.location }
+  if (searchParams.relocatable) where.relocatable = searchParams.relocatable
   if (searchParams.visaOnly === "true") where.visaSponsorRequired = true
+
+  // Skills filter — Prisma level
+  if (searchParams.skills) {
+    const skillList = searchParams.skills.split(",").map(s => s.trim()).filter(Boolean)
+    if (skillList.length > 0) {
+      where.skills = {
+        some: {
+          OR: skillList.map(s => ({
+            name: {
+              contains: s,
+            }
+          }))
+        }
+      }
+    }
+  }
 
   const [seekers, total] = await Promise.all([
     prisma.jobSeeker.findMany({
@@ -52,6 +70,7 @@ export default async function TalentShowcasePage({
       include: {
         skills: true,
         jobPreferences: true,
+        education: true,
         user: { select: { name: true, image: true } }
       },
       orderBy: [{ firstName: "asc" }],
@@ -61,16 +80,7 @@ export default async function TalentShowcasePage({
     prisma.jobSeeker.count({ where })
   ])
 
-  // Skills filter — in-memory
-  const filteredSeekers = searchParams.skills
-    ? seekers.filter(s =>
-      s.skills.some(sk =>
-        searchParams.skills!.toLowerCase().split(",").some(fs =>
-          sk.name.toLowerCase().includes(fs.trim())
-        )
-      )
-    )
-    : seekers
+  const filteredSeekers = seekers
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
 

@@ -42,6 +42,7 @@ export async function updateJobSeekerProfile(data: any) {
           differentlyAbled: data.differentlyAbled || jobSeeker.differentlyAbled,
           veteranStatus: data.veteranStatus || jobSeeker.veteranStatus,
           resumeUrl: data.resumeUrl || jobSeeker.resumeUrl,
+          yearsOfExperience: data.yearsOfExperience ? parseFloat(data.yearsOfExperience) : jobSeeker.yearsOfExperience,
         }
       }),
       

@@ -102,6 +102,9 @@ export default async function TalentProfilePage({ params }: { params: Promise<{ 
                 {primaryPreference.preferredType && (
                   <span className="flex items-center gap-2"><Briefcase className="h-4 w-4" />{primaryPreference.preferredType.replace("_", " ")}</span>
                 )}
+                {seeker.yearsOfExperience !== null && (
+                  <span className="flex items-center gap-2"><Briefcase className="h-4 w-4" />{seeker.yearsOfExperience} {seeker.yearsOfExperience === 1 ? 'Year' : 'Years'} Experience</span>
+                )}
               </div>
 
               {/* Social links */}

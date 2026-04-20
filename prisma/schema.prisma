@@ -99,6 +99,7 @@ model JobSeeker {
   interviews          Interview[]
   applications        JobApplication[]
   jobPreferences      JobPreference[]
+  yearsOfExperience   Float?
   user                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   languages           Language[]
   savedJobs           SavedJob[]

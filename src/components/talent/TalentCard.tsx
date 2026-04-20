@@ -1,6 +1,6 @@
 
 import Link from "next/link"
-import { MapPin, Clock, ShieldCheck, Zap, ArrowRight } from "lucide-react"
+import { MapPin, Clock, ShieldCheck, Zap, ArrowRight, Briefcase, GraduationCap } from "lucide-react"
 
 interface Skill {
   id: string
@@ -19,6 +19,13 @@ interface TalentCardProps {
     availability: string | null
     noticePeriod: string | null
     visaSponsorRequired: boolean
+    yearsOfExperience: number | null
+    bio: string | null
+    education: {
+      degree: string
+      institution: string
+      yearOfPassing: number
+    }[]
     skills: Skill[]
     jobPreferences: {
       preferredRole: string | null
@@ -47,13 +54,12 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
     .toUpperCase()
     .slice(0, 2)
 
-  const topSkills = seeker.skills.slice(0, 6)
+  const topSkills = seeker.skills.slice(0, 3)
 
   const primaryPreference = seeker.jobPreferences?.[0] || {}
   const preferredRole = primaryPreference.preferredRole
   const preferredType = primaryPreference.preferredType
   const expectedSalaryMin = primaryPreference.expectedSalaryMin
-  const noticePeriod = primaryPreference.noticePeriod || seeker.noticePeriod
   const availability = primaryPreference.availability
 
   const getProficiencyStyle = (p: string) => {
@@ -85,7 +91,7 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
             <div>
               <h3 className="text-2xl font-bold text-navy leading-tight">{name}</h3>
               <p className="text-md font-bold text-slate-400 mt-1">
-                {preferredRole || seeker.headline || "Open to opportunities"}
+                {seeker.headline || "Open to opportunities"}
               </p>
               <div className="flex items-center gap-2 mt-1.5 overflow-hidden">
                 {seeker.city && (
@@ -111,6 +117,15 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
             </div>
           )}
         </div>
+        
+        {/* Bio Preview */}
+        {seeker.bio && (
+          <div className="mt-6">
+            <p className="text-sm font-medium text-slate-500 line-clamp-2 leading-relaxed">
+              {seeker.bio}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Body */}
@@ -123,15 +138,27 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
               {preferredType}
             </span>
           )}
-          {noticePeriod && (
+          {/* {noticePeriod && (
             <span className="px-3 py-1.5 bg-navy/5 border border-navy/10 rounded-xl text-md font-semibold text-slate-600  flex items-center gap-1.5 shadow-xs">
               <Zap className="h-4 w-4 text-amber" />
               {noticePeriod}
             </span>
-          )}
+          )} */}
           {availability && (
             <span className="px-3 py-1.5 bg-emerald/10 border border-emerald/20 rounded-xl text-md font-semibold text-slate-600 shadow-xs">
               {availability}
+            </span>
+          )}
+          {seeker.yearsOfExperience !== null && (
+            <span className="px-3 py-1.5 border  rounded-xl text-md font-semibold shadow-xs flex items-center gap-1.5">
+              <Briefcase className="h-4 w-4" />
+              {seeker.yearsOfExperience} {seeker.yearsOfExperience === 1 ? 'Year' : 'Years'} Exp
+            </span>
+          )}
+          {seeker.education && seeker.education.length > 0 && (
+            <span className="px-3 py-1.5 border  rounded-xl text-md font-semibold shadow-xs flex items-center gap-1.5">
+              <GraduationCap className="h-4 w-4" />
+              {seeker.education.sort((a, b) => b.yearOfPassing - a.yearOfPassing)[0].degree}
             </span>
           )}
         </div>
@@ -139,6 +166,9 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
         {/* Skills */}
         {topSkills.length > 0 && (
           <div className="flex flex-wrap gap-2">
+            <span className="my-auto  font-bold">
+              Skills : 
+            </span>
             {topSkills.map((skill) => (
               <span
                 key={skill.id}
@@ -148,9 +178,9 @@ export function TalentCard({ seeker, showOutreachButton = false }: TalentCardPro
                 {skill.name}
               </span>
             ))}
-            {seeker.skills.length > 6 && (
-              <span className="px-3 py-1.5 bg-slate-50 border border-dashed border-slate-200 rounded-xl text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                +{seeker.skills.length - 6}
+            {seeker.skills.length > 4 && (
+              <span className="px-3 py-1.5 bg-slate-50 border border-dashed border-slate-200 rounded-xl text-sm font-bold text-slate-400">
+                +{seeker.skills.length - 3} more
               </span>
             )}
           </div>

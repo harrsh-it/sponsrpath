@@ -63,6 +63,7 @@ export default async function EmployerTalentSearchPage({
     include: {
       skills: true,
       jobPreferences: true,
+      education: true,
       user: { select: { name: true, image: true } }
     },
     orderBy: [{ firstName: "asc" }],

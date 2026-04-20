@@ -13,6 +13,7 @@ export function TalentFilters() {
   const [location, setLocation] = useState(params.get("location") ?? "")
   const [availability, setAvailability] = useState(params.get("availability") ?? "")
   const [notice, setNotice] = useState(params.get("notice") ?? "")
+  const [relocatable, setRelocatable] = useState(params.get("relocatable") ?? "")
   const [visaOnly, setVisaOnly] = useState(params.get("visaOnly") === "true")
 
   function applyFilters() {
@@ -22,6 +23,7 @@ export function TalentFilters() {
     if (location) q.set("location", location)
     if (availability) q.set("availability", availability)
     if (notice) q.set("notice", notice)
+    if (relocatable) q.set("relocatable", relocatable)
     if (visaOnly) q.set("visaOnly", "true")
     router.push(`?${q.toString()}`)
   }
@@ -32,11 +34,12 @@ export function TalentFilters() {
     setLocation("")
     setAvailability("")
     setNotice("")
+    setRelocatable("")
     setVisaOnly(false)
     router.push("?")
   }
 
-  const hasFilters = skills || jobType || location || availability || notice || visaOnly
+  const hasFilters = skills || jobType || location || availability || notice || relocatable || visaOnly
 
   return (
     <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-navy/5 p-8 space-y-8">
@@ -85,12 +88,12 @@ export function TalentFilters() {
             className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium text-navy focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy/20 focus:bg-white transition-all appearance-none cursor-pointer"
           >
             <option value="">Any Type</option>
-            <option value="Full-time">Full-time</option>
+            <option value="Full-time">Full-time / Permanent</option>
+            <option value="Contract">Fixed-term Contract</option>
             <option value="Part-time">Part-time</option>
-            <option value="Contract">Contract</option>
             <option value="Internship">Internship</option>
             <option value="Graduate Scheme">Graduate Scheme</option>
-            <option value="Freelance">Freelance</option>
+            <option value="Freelance">Freelance / Project-based</option>
           </select>
         </div>
 
@@ -118,11 +121,13 @@ export function TalentFilters() {
             className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium text-navy focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy/20 focus:bg-white transition-all appearance-none cursor-pointer"
           >
             <option value="">Any Notice</option>
-            <option value="Immediate">Immediate / None</option>
-            <option value="1 week">1 Week</option>
-            <option value="2 weeks">2 Weeks</option>
-            <option value="1 month">1 Month</option>
-            <option value="3 months">3 Months</option>
+            <option value="Immediate">Immediate / Not employed</option>
+            <option value="1 week">1 week</option>
+            <option value="2 weeks">2 weeks</option>
+            <option value="1 month">1 month</option>
+            <option value="2 months">2 months</option>
+            <option value="3 months">3 months</option>
+            <option value="6 months+">6 months or more</option>
           </select>
         </div>
 
@@ -141,6 +146,23 @@ export function TalentFilters() {
             <option value="2 Weeks">2 Weeks Notice</option>
             <option value="1 Month">1 Month Notice</option>
             <option value="3 Months">3 Months Notice</option>
+          </select>
+        </div>
+
+        {/* Relocation */}
+        <div>
+          <label className="block text-lg font-bold text-navy mb-3">
+            Open to Relocation
+          </label>
+          <select
+            value={relocatable}
+            onChange={(e) => setRelocatable(e.target.value)}
+            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium text-navy focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy/20 focus:bg-white transition-all appearance-none cursor-pointer"
+          >
+            <option value="">Any Preference</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="Remote only">Remote only</option>
           </select>
         </div>
 

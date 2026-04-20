@@ -68,6 +68,11 @@ export default async function JobSeekerProfilePage() {
             <p className="text-[10px] font-black text-slate-400 mt-3 flex items-center gap-2 uppercase tracking-widest">
               <MapPin className="h-3 w-3 text-teal" /> {jobSeeker.city || "Location unknown"}
             </p>
+            {jobSeeker.yearsOfExperience !== null && (
+              <p className="text-[10px] font-black text-slate-400 mt-2 flex items-center gap-2 uppercase tracking-widest">
+                <Briefcase className="h-3 w-3 text-teal" /> {jobSeeker.yearsOfExperience} {jobSeeker.yearsOfExperience === 1 ? 'Year' : 'Years'} Experience
+              </p>
+            )}
 
             <div className="w-full border-t border-slate-100 mt-6 pt-6 space-y-3 text-left">
               <div className="flex items-center gap-3 text-sm text-slate-600">

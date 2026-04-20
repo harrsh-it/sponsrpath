@@ -2,13 +2,12 @@
 
 import { useState } from "react"
 import { completeOrganizationOnboarding } from "@/actions/onboarding"
-import { Building2, ArrowRight, ImagePlus, Globe, Building } from "lucide-react"
+import { Building2, ArrowRight, Globe, Building } from "lucide-react"
 import { Logo } from "@/components/ui/Logo"
 
 export default function OrganizationOnboardingPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [fileName, setFileName] = useState<string | null>(null)
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -16,14 +15,6 @@ export default function OrganizationOnboardingPage() {
     setError(null)
     const formData = new FormData(event.currentTarget)
     
-    // In a real app, upload the file to S3/Blob and get the URL. We are mocking this for MVP.
-    if (fileName) {
-      // For now, we set null to let the initials-based fallback handle it in the UI
-      // since we don't have a real persistent upload storage in this local environment.
-      formData.set("logoUrl", "") 
-      formData.delete("file") 
-    }
-
     const result = await completeOrganizationOnboarding(formData)
     
     if (result?.error) {
@@ -32,12 +23,7 @@ export default function OrganizationOnboardingPage() {
     }
   }
 
-  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0]
-    if (file) {
-      setFileName(file.name)
-    }
-  }
+
 
   return (
     <div className="min-h-screen bg-black/15 flex flex-col items-center justify-center p-6 py-6">
@@ -144,38 +130,7 @@ export default function OrganizationOnboardingPage() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
-                Company Logo
-              </label>
-              <div className="mt-1 flex justify-center px-8 pt-8 pb-10 border-2 border-slate-100 border-dashed rounded-3xl hover:bg-amber/5 hover:border-amber transition-all cursor-pointer group relative">
-                <input
-                  type="file"
-                  name="file"
-                  id="logoUpload"
-                  accept="image/png, image/jpeg"
-                  onChange={handleFileChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-                />
-                <div className="space-y-4 text-center">
-                   <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center mx-auto group-hover:bg-amber group-hover:text-white transition-all shadow-sm">
-                    <ImagePlus className="h-8 w-8" />
-                  </div>
-                  <div className="flex text-sm text-slate-600 justify-center">
-                    <span className="font-semibold text-amber uppercase tracking-widest text-xs">Upload a logo</span>
-                    <p className="pl-1 font-semibold text-xs uppercase tracking-widest text-slate-400">or drag and drop</p>
-                  </div>
-                   <p className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">
-                    PNG, JPG up to 2MB
-                  </p>
-                  {fileName && (
-                    <div className="mt-6 py-3 px-6 bg-amber/10 text-amber font-semibold rounded-2xl text-xs truncate max-w-xs mx-auto border border-amber/20 shadow-sm animate-in fade-in zoom-in duration-300">
-                      ✓ {fileName}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+
 
             <div className="pt-4">
               <button
