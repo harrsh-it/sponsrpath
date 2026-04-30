@@ -8,6 +8,7 @@ import FilterSidebar from "@/components/jobs/FilterSidebar"
 import Link from "next/link"
 import { auth } from "@/auth"
 import SaveJobButton from "@/components/jobs/SaveJobButton"
+import { getScrapedJobs } from "@/lib/fetchers/naukri"
 
 export const metadata = {
   title: "Browse Jobs | SponsorPath",
@@ -105,6 +106,16 @@ export default async function JobsPage({
     ],
     take: 50,
   })
+
+  // Fetch and filter scraped jobs
+  const allScrapedJobs = getScrapedJobs()
+  const filteredScrapedJobs = q 
+    ? allScrapedJobs.filter(job => 
+        job.title.toLowerCase().includes(q.toLowerCase()) || 
+        job.company.toLowerCase().includes(q.toLowerCase()) ||
+        job.description.toLowerCase().includes(q.toLowerCase())
+      )
+    : allScrapedJobs
 
   return (
     <>
@@ -276,6 +287,87 @@ export default async function JobsPage({
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* Scraped Jobs Section */}
+              {filteredScrapedJobs.length > 0 && (
+                <div className="mt-12 space-y-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="h-px flex-1 bg-slate-200"></div>
+                    <h2 className="text-slate-400 font-black uppercase tracking-widest text-xs">
+                      Web Scraped Jobs
+                    </h2>
+                    <div className="h-px flex-1 bg-slate-200"></div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {filteredScrapedJobs.map((job) => (
+                      <div
+                        key={job.id}
+                        className="bg-white/60 backdrop-blur-sm rounded-[2rem] shadow-sm border border-slate-100 p-8 hover:shadow-xl hover:shadow-navy/5 transition-all group relative overflow-hidden"
+                      >
+                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mt-1">
+                          <div className="flex items-start gap-6 flex-1 min-w-0">
+                            <div className="w-16 h-16 rounded-2xl bg-white border border-slate-100 flex items-center justify-center shrink-0 shadow-inner group-hover:bg-teal/5 transition-all duration-300 overflow-hidden p-2">
+                              {job.logo ? (
+                                <img src={job.logo} alt={job.company} className="w-full h-full object-contain" />
+                              ) : (
+                                <Building2 className="h-8 w-8 text-slate-200" />
+                              )}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-3 mb-1">
+                                <h2 className="text-2xl font-bold text-navy group-hover:text-teal transition-colors tracking-tight">
+                                  {job.title}
+                                </h2>
+                              </div>
+                              <p className="text-slate-400 font-bold text-md ">{job.company}</p>
+                              
+                              <div className="flex flex-wrap items-center gap-4 mt-3">
+                                <div className="flex items-center gap-1.5 text-md font-bold text-slate-500">
+                                  <MapPin className="h-6 w-6 text-slate-300" /> {job.location}
+                                </div>
+                                <div className="flex items-center gap-1.5 text-md font-bold text-slate-500">
+                                  <Zap className="h-6 w-6 text-slate-300" /> {job.exp}
+                                </div>
+                                <div className="flex items-center gap-1.5 text-md font-bold text-slate-500">
+                                  <Clock className="h-6 w-6 text-slate-300" /> {job.jobType}
+                                </div>
+                              </div>
+
+                              <p className="mt-3 text-slate-500/70 text-sm line-clamp-1 font-lg font-semibold border-l-2 border-slate-100 ">
+                                {job.description}...
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-3 shrink-0">
+                            {job.salary && job.salary !== "Unknown Salary" && (
+                              <span className="text-lg font-semibold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100 whitespace-nowrap">
+                                {job.salary}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between mt-2 border-t border-slate-50 pt-4">
+                          <div className="flex items-center gap-4">
+                            
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <a 
+                              href={job.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-navy text-white font-bold text-lg px-6 py-2 rounded-2xl hover:bg-navy hover:text-white transition-all active:scale-95 flex items-center gap-2"
+                            >
+                              Details
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </main>
